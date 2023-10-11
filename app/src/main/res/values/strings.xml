@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">OurStory</string>
+    <string name="title_login_page">Share your story with us :)</string>
+    <string name="message_login_page">Login with registered account</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="title_signup_page">Join with us!</string>
+    <string name="name">Name</string>
+    <string name="signup">Signup</string>
+    <string name="logout">Logout</string>
+    <string name="message_main_page">Hello, this is MainACtivity!\n</string>
+    <string name="title_welcome_page">Welcome to OurStory</string>
+    <string name="message_welcome_page">OurStory is a safe place to share stories and connect with other people</string>
+    <string name="password_helper_text">Fill out more than 8 character</string>
+    <string name="email_helper_text">Use valid email</string>
+</resources>
