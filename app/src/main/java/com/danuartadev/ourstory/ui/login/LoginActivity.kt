@@ -11,6 +11,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import com.danuartadev.ourstory.data.pref.UserModel
@@ -31,8 +32,10 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.emailEditText.addTextChangedListener(createTextWatcher())
-        binding.passwordEditText.addTextChangedListener(createTextWatcher())
+        binding.apply {
+            emailEditText.addTextChangedListener(createTextWatcher())
+            passwordEditText.addTextChangedListener(createTextWatcher())
+        }
 
         setupView()
         setupAction()
@@ -40,14 +43,36 @@ class LoginActivity : AppCompatActivity() {
         enableLoginButton()
     }
 
+    private fun observerLogin() {
+        // to be improved
+        viewModel.loginStatus.observe(this) { isSuccess ->
+                if (isSuccess) {
+                    Toast.makeText(this, "Successfully logged in", Toast.LENGTH_SHORT).show()
+                    Intent(this, MainActivity::class.java)
+                } else {
+                    Toast.makeText(this, "Failed to logged in", Toast.LENGTH_SHORT).show()
+                }
+        }
+        viewModel.isLoadingLogin.observe(this) {
+            showLoading(it)
+        }
+    }
+
+    private fun showLoading(isLoadingLogin: Boolean) {
+        if (isLoadingLogin) {
+            binding.loginProgressBar.visibility = View.VISIBLE
+        } else {
+            binding.loginProgressBar.visibility = View.GONE
+        }
+    }
+
+
     private fun createTextWatcher(): TextWatcher {
         return object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // Not used in this case
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Not used in this case
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -71,20 +96,22 @@ class LoginActivity : AppCompatActivity() {
 
     private fun setupAction() {
         binding.loginButton.setOnClickListener {
-            val email = binding.emailEditText.text.toString()
-            viewModel.saveSession(UserModel(email, "sample_token"))
-            AlertDialog.Builder(this).apply {
-                setTitle("Yeah!")
-                setMessage("Anda berhasil login. Sudah tidak sabar untuk belajar ya?")
-                setPositiveButton("Lanjut") { _, _ ->
-                    val intent = Intent(context, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(intent)
-                    finish()
-                }
-                create()
-                show()
-            }
+            val emailText = binding.emailEditText.text.toString()
+            val passwordText = binding.passwordEditText.text.toString()
+            observerLogin()
+            viewModel.login(emailText, passwordText)
+//            AlertDialog.Builder(this).apply {
+//                setTitle("Yeah!")
+//                setMessage("Anda berhasil login. Sudah tidak sabar untuk belajar ya?")
+//                setPositiveButton("Lanjut") { _, _ ->
+//                    val intent = Intent(context, MainActivity::class.java)
+//                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+//                    startActivity(intent)
+//                    finish()
+//                }
+//                create()
+//                show()
+//            }
         }
     }
 

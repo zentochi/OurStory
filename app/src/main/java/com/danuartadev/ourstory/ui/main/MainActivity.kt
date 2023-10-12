@@ -31,6 +31,8 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this, WelcomeActivity::class.java))
                 finish()
             }
+            binding.messageTextView.text = "current status:\n" +
+                    "email:${user.email}\ntoken:${user.token}\nisLogin:${user.isLogin}"
         }
 
         setupView()

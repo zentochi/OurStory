@@ -14,4 +14,7 @@
     <string name="message_welcome_page">OurStory is a safe place to share stories and connect with other people</string>
     <string name="password_helper_text">Fill out more than 8 character</string>
     <string name="email_helper_text">Use valid email</string>
+    <string name="name_helper_text">Your display username</string>
+    <string name="password_login_helper_text">Enter password</string>
+    <string name="email_login_helper_text">Enter registered email</string>
 </resources>

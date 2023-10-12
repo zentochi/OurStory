@@ -1,7 +1,10 @@
 package com.danuartadev.ourstory.data
 
+import android.provider.ContactsContract.CommonDataKinds.Email
 import com.danuartadev.ourstory.data.pref.UserModel
 import com.danuartadev.ourstory.data.pref.UserPreference
+import com.danuartadev.ourstory.data.remote.response.LoginResponse
+import com.danuartadev.ourstory.data.remote.response.RegisterResponse
 import com.danuartadev.ourstory.data.remote.retrofit.ApiService
 import kotlinx.coroutines.flow.Flow
 
@@ -21,6 +24,14 @@ class UserRepository private constructor(
 
     suspend fun logout() {
         userPreference.logout()
+    }
+
+    suspend fun login(email: String, password: String): LoginResponse {
+        return apiService.login(email, password)
+    }
+
+    suspend fun register(name: String, email: String, password: String): RegisterResponse {
+        return apiService.register(name, email, password)
     }
 
     companion object {
