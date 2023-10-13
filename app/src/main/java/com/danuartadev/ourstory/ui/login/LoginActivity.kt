@@ -46,12 +46,22 @@ class LoginActivity : AppCompatActivity() {
     private fun observerLogin() {
         // to be improved
         viewModel.loginStatus.observe(this) { isSuccess ->
-                if (isSuccess) {
-                    Toast.makeText(this, "Successfully logged in", Toast.LENGTH_SHORT).show()
-                    Intent(this, MainActivity::class.java)
-                } else {
-                    Toast.makeText(this, "Failed to logged in", Toast.LENGTH_SHORT).show()
+            if (isSuccess) {
+                Toast.makeText(this, "Successfully Logged in", Toast.LENGTH_SHORT).show()
+                showLoading(false)
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                viewModel.errorMessage.observe(this) { error ->
+                    if (!error.isNullOrBlank()) {
+                        Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
+                    }
                 }
+                showLoading(false)
+            }
         }
         viewModel.isLoadingLogin.observe(this) {
             showLoading(it)
@@ -82,10 +92,13 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun enableLoginButton() {
-        val emailText = binding.emailEditText.text.toString()
+        val emailText = binding.emailEditText
         val passwordText = binding.passwordEditText.text.toString()
 
-        val isSubmitButtonEnabled = emailText.isNotEmpty() && emailText.contains("@") && passwordText.length >= 8
+        // Check if email is valid (based on your custom edTextEmail)
+        val isEmailValid = emailText.error == null
+
+        val isSubmitButtonEnabled = isEmailValid && passwordText.length >= 8
 
         binding.loginButton.isEnabled = isSubmitButtonEnabled
     }
@@ -100,6 +113,7 @@ class LoginActivity : AppCompatActivity() {
             val passwordText = binding.passwordEditText.text.toString()
             observerLogin()
             viewModel.login(emailText, passwordText)
+
 //            AlertDialog.Builder(this).apply {
 //                setTitle("Yeah!")
 //                setMessage("Anda berhasil login. Sudah tidak sabar untuk belajar ya?")

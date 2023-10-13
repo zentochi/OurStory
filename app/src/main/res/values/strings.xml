@@ -17,4 +17,8 @@
     <string name="name_helper_text">Your display username</string>
     <string name="password_login_helper_text">Enter password</string>
     <string name="email_login_helper_text">Enter registered email</string>
+    <string name="description">Description</string>
+    <string name="cameraChoose">Camera</string>
+    <string name="galleryChoose">Gallery</string>
+    <string name="postStory">Submit story</string>
 </resources>

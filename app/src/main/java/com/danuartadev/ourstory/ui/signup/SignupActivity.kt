@@ -45,7 +45,13 @@ class SignupActivity : AppCompatActivity() {
             if (isSuccess) {
                 Toast.makeText(this, "Successfully Registered", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
+                viewModel.errorMessage.observe(this) { error ->
+                    if (!error.isNullOrBlank()) {
+                        Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
         viewModel.isLoadingSignup.observe(this) {
@@ -80,9 +86,13 @@ class SignupActivity : AppCompatActivity() {
 
     private fun enableSignupButton() {
         val nameText = binding.nameEditText.text.toString()
-        val emailText = binding.emailEditText.text.toString()
+        val emailEditText = binding.emailEditText
         val passwordText = binding.passwordEditText.text.toString()
-        val isSubmitButtonEnabled = nameText.isNotEmpty() && emailText.isNotEmpty() && emailText.contains("@")&& passwordText.length >= 8
+
+        // Check if email is valid (based on your custom edTextEmail)
+        val isEmailValid = emailEditText.error == null
+
+        val isSubmitButtonEnabled = nameText.isNotEmpty() && isEmailValid && passwordText.length >= 8
 
         binding.signupButton.isEnabled = isSubmitButtonEnabled
     }

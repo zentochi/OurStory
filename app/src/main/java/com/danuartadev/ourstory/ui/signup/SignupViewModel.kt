@@ -22,36 +22,36 @@ class SignupViewModel(private val repository: UserRepository) : ViewModel() {
 
     val registerStatus: MutableLiveData<Boolean> = MutableLiveData()
 
-     fun register(name: String, email: String, password: String) {
-         viewModelScope.launch {
-             try {
-                 _isLoadingSignup.value = true
-                 val response = repository.register(name, email, password)
-                 Log.d(TAG, "response: $response")
-                 _registerResponse.value = response
-                 _isLoadingSignup.value = false
-                 registerStatus.postValue(true)
-                 val message = repository.register(name, email, password).message
-                 Log.d(TAG, message.toString())
-             } catch (e: HttpException) {
-                 _isLoadingSignup.value = false
-                 val jsonInString = e.response()?.errorBody()?.string()
-                 val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
-                 val errorMessage = errorBody.message
-                 Log.d(TAG, "e: $errorMessage")
-                 registerStatus.postValue(false)
-                 Log.d(TAG,"HttpException: ${registerStatus.value}")
+    val errorMessage = MutableLiveData<String?>()
 
-             } catch (E: Exception) {
-                 _isLoadingSignup.value = false
-                 registerStatus.postValue(false)
-                 Log.d(TAG,"Exception: ${registerStatus.value}")
-             }
-
-         }
-     }
+    fun register(name: String, email: String, password: String) {
+        viewModelScope.launch {
+            try {
+                _isLoadingSignup.value = true
+                val response = repository.register(name, email, password)
+                _registerResponse.value = response
+                _isLoadingSignup.value = false
+                registerStatus.postValue(true)
+                Log.d(TAG, "response: $response")
+            } catch (e: HttpException) {
+                _isLoadingSignup.value = false
+                val jsonInString = e.response()?.errorBody()?.string()
+                val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
+                val errorMessageText = errorBody.message
+                Log.d(TAG, "HttpException: $errorMessageText")
+                errorMessage.postValue(errorMessageText)
+                registerStatus.postValue(false)
+            } catch (e: Exception) {
+                _isLoadingSignup.value = false
+                registerStatus.postValue(false)
+                Log.d(TAG, "Exception: An error occurred.")
+                errorMessage.postValue("An error occurred.")
+            }
+        }
+    }
 
     companion object {
         private const val TAG = "SignupViewModel"
     }
 }
+

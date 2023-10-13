@@ -31,35 +31,40 @@ class LoginViewModel(private val repository: UserRepository) : ViewModel() {
     fun login(email: String, password: String) {
         viewModelScope.launch {
             try {
-                _isLoadingLogin.value = true
+                _isLoadingLogin.postValue(true)
                 val response = repository.login(email, password)
                 if (!response.error!!) {
                     val token = response.loginResult?.token
-                    val userModel = UserModel(email, token ?: "")
+                    val userModel = UserModel(email, token ?: "missing token lur")
                     saveSession(userModel)
+                    loginStatus.postValue(true) // Indicate successful login
                 } else {
-                    _isLoadingLogin.value = false
-                    val message = repository.login(email, password).message
+                    _isLoadingLogin.postValue(false)
+                    val message = response.message
                     Log.d(TAG, message.toString())
+                    loginStatus.postValue(false) // Indicate failed login
                 }
             } catch (e: HttpException) {
-                _isLoadingLogin.value = false
+                _isLoadingLogin.postValue(false)
                 val jsonInString = e.response()?.errorBody()?.string()
                 val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
-                val errorMessage = errorBody.message
-                Log.d(TAG, "e: $errorMessage")
+                val errorMessageText = errorBody.message
+                Log.d(TAG, "e: $errorMessageText")
+                errorMessage.postValue(errorMessageText)
+                loginStatus.postValue(false) // Indicate failed login
             } catch (e: Exception) {
-                _isLoadingLogin.value = false
+                _isLoadingLogin.postValue(false)
                 val errorMessageText = "An error occurred."
                 errorMessage.postValue(errorMessageText)
+                loginStatus.postValue(false) // Indicate failed login
             }
         }
     }
 
-    fun saveSession(user: UserModel) {
+    private fun saveSession(user: UserModel) {
         viewModelScope.launch {
             repository.saveSession(user)
-            Log.d(TAG, "Token saved successfully: ${user.token}")
+            Log.d(TAG, "Token saved: ${user.token}")
         }
     }
 

@@ -5,6 +5,7 @@ import com.danuartadev.ourstory.data.pref.UserModel
 import com.danuartadev.ourstory.data.pref.UserPreference
 import com.danuartadev.ourstory.data.remote.response.LoginResponse
 import com.danuartadev.ourstory.data.remote.response.RegisterResponse
+import com.danuartadev.ourstory.data.remote.response.StoryResponse
 import com.danuartadev.ourstory.data.remote.retrofit.ApiService
 import kotlinx.coroutines.flow.Flow
 
@@ -33,6 +34,11 @@ class UserRepository private constructor(
     suspend fun register(name: String, email: String, password: String): RegisterResponse {
         return apiService.register(name, email, password)
     }
+
+    suspend fun getStories() : StoryResponse {
+        return apiService.getStories()
+    }
+
 
     companion object {
         @Volatile
