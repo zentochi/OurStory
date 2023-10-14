@@ -36,25 +36,42 @@ class UserRepository private constructor(
         userPreference.logout()
     }
 
-    suspend fun login(email: String, password: String): LoginResponse {
-        return apiService.login(email, password)
+//    suspend fun login(email: String, password: String): LoginResponse {
+//        return apiService.login(email, password)
+//    }
+    fun login(email: String, password: String) = liveData {
+        emit(Result.Loading)
+        try {
+            val successResponse = apiService.login(email, password)
+            emit(Result.Success(successResponse))
+            val token = successResponse.loginResult?.token ?: ""
+            val userModel = UserModel(email, token, true)
+            userPreference.saveSession(userModel)
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, FileUploadResponse::class.java)
+            emit(Result.Error(errorResponse.message))
+        }
     }
 
     suspend fun register(name: String, email: String, password: String): RegisterResponse {
         return apiService.register(name, email, password)
     }
 
-    suspend fun getStories() : StoryResponse {
-        return apiService.getStories()
-    }
-    //todo
-//    fun getStories() = liveData {
-//        emit(Result.Loading)
-//        try {
-//            val successResponse = apiService.getStories()
-//            emit(Result.Success)
-//        }
+//    suspend fun getStories() : StoryResponse {
+//        return apiService.getStories()
 //    }
+    fun getStories() = liveData {
+        emit(Result.Loading)
+        try {
+            val successResponse = apiService.getStories()
+            emit(Result.Success(successResponse))
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, FileUploadResponse::class.java)
+            emit(Result.Error(errorResponse.message))
+        }
+    }
 
     fun uploadStory(imageFile: File, description: String) = liveData {
         emit(Result.Loading)

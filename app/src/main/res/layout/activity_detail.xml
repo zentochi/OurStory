@@ -14,10 +14,10 @@
             android:id="@+id/imgProfile"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_margin="16dp"
             android:src="@drawable/ic_account"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toTopOf="@+id/guideline3"
+            app:layout_constraintStart_toStartOf="@+id/guideline5"
+            app:layout_constraintTop_toTopOf="@+id/guideline1" />
 
         <TextView
             android:id="@+id/tvProfileName"
@@ -58,7 +58,7 @@
             android:id="@+id/imgStory"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:scaleType="centerInside"
             app:layout_constraintEnd_toStartOf="@+id/guideline8"
             app:layout_constraintStart_toEndOf="@+id/guideline5"

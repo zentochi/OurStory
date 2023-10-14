@@ -13,29 +13,22 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import com.danuartadev.ourstory.data.pref.UserModel
 import com.danuartadev.ourstory.databinding.ActivityLoginBinding
 import com.danuartadev.ourstory.ui.ViewModelFactory
 import com.danuartadev.ourstory.ui.main.MainActivity
+import com.danuartadev.ourstory.utils.Result
 
 class LoginActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<LoginViewModel> {
         ViewModelFactory.getInstance(this)
     }
-
     private lateinit var binding: ActivityLoginBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        binding.apply {
-            emailEditText.addTextChangedListener(createTextWatcher())
-            passwordEditText.addTextChangedListener(createTextWatcher())
-        }
 
         setupView()
         setupAction()
@@ -43,40 +36,61 @@ class LoginActivity : AppCompatActivity() {
         enableLoginButton()
     }
 
-    private fun observerLogin() {
+    private fun loginAccount() {
         // to be improved
-        viewModel.loginStatus.observe(this) { isSuccess ->
-            if (isSuccess) {
-                Toast.makeText(this, "Successfully Logged in", Toast.LENGTH_SHORT).show()
-                showLoading(false)
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
-            } else {
-                viewModel.errorMessage.observe(this) { error ->
-                    if (!error.isNullOrBlank()) {
-                        Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
+        val emailText = binding.emailEditText.text.toString()
+        val passwordText = binding.passwordEditText.text.toString()
+        viewModel.login(emailText, passwordText).observe(this) { result ->
+            if (result != null) {
+                when (result) {
+                    is Result.Loading -> {
+                        showLoading(true)
+                    }
+                    is Result.Success -> {
+                        val email = binding.emailEditText.text.toString()
+                        val token = result.data.loginResult?.token ?: ""
+                        viewModel.saveSession(UserModel(email, token))
+                        result.data.message?.let { showToast(it) }
+                        showLoading(false)
+                        val intent = Intent(this, MainActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                        startActivity(intent)
+                    }
+                    is Result.Error -> {
+                        showToast(result.error)
+                        showLoading(false)
                     }
                 }
-                showLoading(false)
             }
         }
-        viewModel.isLoadingLogin.observe(this) {
-            showLoading(it)
+//            if (isSuccess) {
+//                Toast.makeText(this, "Successfully Logged in", Toast.LENGTH_SHORT).show()
+//                showLoading(false)
+//                val intent = Intent(this, MainActivity::class.java)
+//                startActivity(intent)
+//                finish()
+//            } else {
+//                viewModel.errorMessage.observe(this) { error ->
+//                    if (!error.isNullOrBlank()) {
+//                        Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+//                    } else {
+//                        Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//                showLoading(false)
+//            }
         }
+//        viewModel.isLoadingLogin.observe(this) {
+//            showLoading(it)
+//        }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.loginProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
-    private fun showLoading(isLoadingLogin: Boolean) {
-        if (isLoadingLogin) {
-            binding.loginProgressBar.visibility = View.VISIBLE
-        } else {
-            binding.loginProgressBar.visibility = View.GONE
-        }
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
-
-
     private fun createTextWatcher(): TextWatcher {
         return object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -92,40 +106,33 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun enableLoginButton() {
-        val emailText = binding.emailEditText
+
+        val emailText = binding.emailEditText.text.toString()
         val passwordText = binding.passwordEditText.text.toString()
-
-        // Check if email is valid (based on your custom edTextEmail)
-        val isEmailValid = emailText.error == null
-
+        val isEmailValid = binding.emailEditText.error == null
         val isSubmitButtonEnabled = isEmailValid && passwordText.length >= 8
-
         binding.loginButton.isEnabled = isSubmitButtonEnabled
     }
 
-    private fun setupView() { @Suppress("DEPRECATION") if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) window.insetsController?.hide(
-        WindowInsets.Type.statusBars()
-    ) else { window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN) }; supportActionBar?.hide() }
+    private fun setupView() {
+        @Suppress("DEPRECATION") if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.hide(WindowInsets.Type.statusBars())
+        } else {
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN) 
+        }
+        supportActionBar?.hide()
+        
+        binding.apply {
+            emailEditText.addTextChangedListener(createTextWatcher())
+            passwordEditText.addTextChangedListener(createTextWatcher())
+        }
+    }
 
     private fun setupAction() {
         binding.loginButton.setOnClickListener {
             val emailText = binding.emailEditText.text.toString()
-            val passwordText = binding.passwordEditText.text.toString()
-            observerLogin()
-            viewModel.login(emailText, passwordText)
-
-//            AlertDialog.Builder(this).apply {
-//                setTitle("Yeah!")
-//                setMessage("Anda berhasil login. Sudah tidak sabar untuk belajar ya?")
-//                setPositiveButton("Lanjut") { _, _ ->
-//                    val intent = Intent(context, MainActivity::class.java)
-//                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-//                    startActivity(intent)
-//                    finish()
-//                }
-//                create()
-//                show()
-//            }
+            loginAccount()
+//            viewModel.login(emailText, passwordText)
         }
     }
 

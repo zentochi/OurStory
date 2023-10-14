@@ -3,20 +3,18 @@ package com.danuartadev.ourstory.ui.main
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.danuartadev.ourstory.data.remote.response.ListStoryItem
 import com.danuartadev.ourstory.databinding.ActivityMainBinding
 import com.danuartadev.ourstory.ui.ViewModelFactory
 import com.danuartadev.ourstory.ui.story.add.AddStoryActivity
-import com.danuartadev.ourstory.ui.story.add.CameraActivity
-import com.danuartadev.ourstory.ui.story.detail.DetailActivity
 import com.danuartadev.ourstory.ui.welcome.WelcomeActivity
+import com.danuartadev.ourstory.utils.Result
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,35 +34,29 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this, WelcomeActivity::class.java))
                 finish()
             } else {
-                setupRecyclerView()
 
                 // Observe the loading status
-                viewModel.isLoadingStories.observe(this) { isLoading ->
-                    binding.mainProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-                }
+//                viewModel.isLoadingStories.observe(this) { isLoading ->
+//                    binding.mainProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+//                }
             }
             // logging status
-            binding.tvError.visibility = View.VISIBLE
-            binding.tvError.text = "current status:\n" +
-                    "email:${user.email}\ntoken:${user.token}\nisLogin:${user.isLogin}"
+//            binding.tvError.visibility = View.VISIBLE
+//            binding.tvError.text = "current status:\n" +
+//                    "email:${user.email}\ntoken:${user.token}\nisLogin:${user.isLogin}"
+            setupRecyclerView()
+            viewStories()
+            setupView()
+            setupAction()
 
             binding.refreshRvMain.setOnRefreshListener {
-                viewModel.getStories()
-                binding.rvMain.scrollToPosition(0)
+                viewStories()
                 binding.refreshRvMain.isRefreshing = false
             }
         }
 
-        viewModel.getStories()
-        setupView()
-        setupAction()
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.getStories()
-        binding.rvMain.scrollToPosition(0)
-    }
     private fun setupView() {
         @Suppress("DEPRECATION")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -76,37 +68,6 @@ class MainActivity : AppCompatActivity() {
             )
         }
         supportActionBar?.hide()
-
-    }
-
-    private fun setupRecyclerView() {
-        val layoutManager = LinearLayoutManager(this)
-        binding.rvMain.layoutManager = layoutManager
-
-        // Initialize the adapter and set it to the RecyclerView
-        adapter = MainAdapter()
-        binding.rvMain.adapter = adapter
-
-        // Observe the stories data
-        viewModel.getStoriesResponse.observe(this) { storyResponse ->
-            if (!storyResponse.error!!) {
-                adapter.submitList(storyResponse.listStory)
-            } else {
-                // Handle the error condition here
-                Log.d(TAG, "Error fetching stories: ${storyResponse.message}")
-            }
-        }
-
-        // Handle the error message visibility
-        viewModel.errorMessage.observe(this) { errorMessage ->
-            if (errorMessage != null) {
-                binding.tvErrorMain.visibility = View.VISIBLE
-                binding.tvErrorMain.text = errorMessage
-            } else {
-                binding.tvErrorMain.visibility = View.GONE
-            }
-        }
-
     }
 
     private fun setupAction() {
@@ -118,13 +79,62 @@ class MainActivity : AppCompatActivity() {
             startActivity(moveIntent)
         }
     }
+    private fun setupRecyclerView() {
+        val layoutManager = LinearLayoutManager(this)
+        binding.rvMain.layoutManager = layoutManager
 
-    private fun showLoading(isLoadingMain: Boolean) {
-        if (isLoadingMain) {
-            binding.mainProgressBar.visibility = View.VISIBLE
-        } else {
-            binding.mainProgressBar.visibility = View.GONE
+        // Initialize the adapter and set it to the RecyclerView
+        adapter = MainAdapter()
+        binding.rvMain.adapter = adapter
+
+//        // Observe the stories data
+//        viewModel.getStoriesResponse.observe(this) { storyResponse ->
+//            if (!storyResponse.error!!) {
+//                adapter.submitList(storyResponse.listStory)
+//            } else {
+//                // Handle the error condition here
+//                Log.d(TAG, "Error fetching stories: ${storyResponse.message}")
+//            }
+//        }
+
+        // Handle the error message visibility
+//        viewModel.errorMessage.observe(this) { errorMessage ->
+//            if (errorMessage != null) {
+//                binding.tvErrorMain.visibility = View.VISIBLE
+//                binding.tvErrorMain.text = errorMessage
+//            } else {
+//                binding.tvErrorMain.visibility = View.GONE
+//            }
+//        }
+
+    }
+
+    private fun viewStories() {
+        viewModel.getStories().observe(this) { result ->
+            if (result != null) {
+                when (result) {
+                    is Result.Loading -> {
+                        showLoading(true)
+                    }
+                    is Result.Success -> {
+                        showLoading(false)
+                        adapter.submitList(result.data.listStory)
+                    }
+                    is Result.Error -> {
+                        showToast(result.error)
+                        showLoading(false)
+                    }
+                }
+            }
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+            binding.mainProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     companion object {
