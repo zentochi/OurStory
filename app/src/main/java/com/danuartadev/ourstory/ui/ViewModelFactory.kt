@@ -8,6 +8,7 @@ import com.danuartadev.ourstory.di.Injection
 import com.danuartadev.ourstory.ui.login.LoginViewModel
 import com.danuartadev.ourstory.ui.main.MainViewModel
 import com.danuartadev.ourstory.ui.signup.SignupViewModel
+import com.danuartadev.ourstory.ui.story.add.AddStoryViewModel
 
 class ViewModelFactory(private val repository: UserRepository) : ViewModelProvider.NewInstanceFactory() {
 
@@ -22,6 +23,9 @@ class ViewModelFactory(private val repository: UserRepository) : ViewModelProvid
             }
             modelClass.isAssignableFrom(SignupViewModel::class.java) -> {
                 SignupViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(AddStoryViewModel::class.java) -> {
+                AddStoryViewModel(repository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }

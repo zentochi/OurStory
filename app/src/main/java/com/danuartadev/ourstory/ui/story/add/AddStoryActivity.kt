@@ -1,62 +1,97 @@
 package com.danuartadev.ourstory.ui.story.add
 
+import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import com.danuartadev.ourstory.R
 import com.danuartadev.ourstory.databinding.ActivityAddStoryBinding
-import android.Manifest
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.widget.Toast
-import androidx.core.content.ContextCompat
+import com.danuartadev.ourstory.ui.ViewModelFactory
+import com.danuartadev.ourstory.ui.main.MainActivity
+import com.danuartadev.ourstory.utils.Result
+import com.danuartadev.ourstory.utils.getImageUri
+import com.danuartadev.ourstory.utils.reduceFileImage
+import com.danuartadev.ourstory.utils.uriToFile
 
 class AddStoryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddStoryBinding
     private var currentImageUri: Uri? = null
-    private fun allPermissionsGranted() =
-        ContextCompat.checkSelfPermission(
-            this,
-            REQUIRED_PERMISSION
-        ) == PackageManager.PERMISSION_GRANTED
-    private val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                Toast.makeText(this, "Permission request granted", Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(this, "Permission request revoked", Toast.LENGTH_LONG).show()
-            }
-        }
+    private val viewModel by viewModels<AddStoryViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (!allPermissionsGranted()) {
-            //request permission
-            requestPermissionLauncher.launch(REQUIRED_PERMISSION)
-        }
+        setupAction()
+    }
 
-        startGallery()
-        startCameraX()
+    private fun setupAction() {
+        binding.btnGallery.setOnClickListener {
+            startGallery()
+        }
+        binding.btnCamera.setOnClickListener {
+            startCamera()
+        }
+        binding.btnPostStory.setOnClickListener {
+            uploadStory()
+        }
     }
 
     private fun startGallery() {
-        binding.btnGallery.setOnClickListener {
-            launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-        }
+        launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
-    private fun startCameraX() {
-        val intent = Intent(this, CameraActivity::class.java)
-        startActivity(intent)
+    private fun startCamera() {
+        currentImageUri = getImageUri(this)
+        launcherIntentCamera.launch(currentImageUri)
+    }
+
+    private fun uploadStory() {
+        currentImageUri?.let { uri ->
+            val imageFile = uriToFile(uri, this).reduceFileImage()
+            Log.d("Image File", "showImage: ${imageFile.path}")
+            val description = binding.tvDesc.text.toString()
+            showLoading(true)
+
+            viewModel.uploadImage(imageFile, description).observe(this) { result ->
+                if (result != null) {
+                    when (result) {
+                        is Result.Loading -> {
+                            showLoading(true)
+                        }
+                        is Result.Success -> {
+                            showToast(result.data.message)
+                            showLoading(false)
+                            val intent = Intent(this, MainActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                            startActivity(intent)
+                        }
+                        is Result.Error -> {
+                            showToast(result.error)
+                            showLoading(false)
+                        }
+                    }
+                }
+            }
+        } ?: showToast(getString(R.string.empty_image_warning))
+    }
+
+    private val launcherIntentCamera = registerForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { isSuccess ->
+        if (isSuccess) {
+            showImage()
+        }
     }
 
     private val launcherGallery = registerForActivityResult(
@@ -73,11 +108,15 @@ class AddStoryActivity : AppCompatActivity() {
     private fun showImage() {
         currentImageUri?.let {
             Log.d("Image uri", "showImage: $it")
-            binding.imageStoryUpload.setImageURI(it)
+            binding.previewImage.setImageURI(it)
         }
     }
 
-    companion object {
-        private const val REQUIRED_PERMISSION = Manifest.permission.CAMERA
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressIndicator.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
 }

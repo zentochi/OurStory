@@ -3,112 +3,144 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/btnPostStory"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="@color/navy"
-            android:text="@string/postStory"
-            app:layout_constraintEnd_toEndOf="@+id/descriptionTextField"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@id/descriptionTextField"
-            app:layout_constraintTop_toBottomOf="@+id/btnCamera" />
-
-        <TextView
-            android:id="@+id/tvUsers"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toStartOf="@+id/guideline7"
-            app:layout_constraintStart_toStartOf="@+id/guideline6"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Username" />
-
-        <ImageView
-            android:id="@+id/imageStoryUpload"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:adjustViewBounds="true"
-            app:layout_constraintEnd_toStartOf="@+id/guideline7"
-            app:layout_constraintStart_toStartOf="@+id/guideline6"
-            app:layout_constraintTop_toBottomOf="@+id/tvUsers"
-            app:srcCompat="@drawable/ic_image_preview" />
-
-        <Button
-            android:id="@+id/btnCamera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/navy"
-            android:text="@string/cameraChoose"
-            android:layout_marginTop="16dp"
-            app:layout_constraintStart_toStartOf="@+id/guideline6"
-            app:layout_constraintTop_toBottomOf="@+id/descriptionTextField" />
-
-        <Button
-            android:id="@+id/btnGallery"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/navy"
-            android:text="@string/galleryChoose"
-            android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toStartOf="@+id/guideline7"
-            app:layout_constraintTop_toBottomOf="@+id/descriptionTextField" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/descriptionTextField"
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressIndicator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toEndOf="@+id/imageStoryUpload"
-            app:layout_constraintStart_toStartOf="@+id/imageStoryUpload"
-            app:layout_constraintTop_toBottomOf="@+id/imageStoryUpload">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tvDesc"
-                android:layout_width="match_parent"
-                android:layout_height="190dp"
-                android:gravity="top"
-                android:hint="@string/description"
-                app:layout_constraintEnd_toEndOf="@+id/imageStoryUpload"
-                app:layout_constraintStart_toStartOf="@+id/imageStoryUpload"
-                app:layout_constraintTop_toBottomOf="@+id/btnCamera" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <ProgressBar
-            android:id="@+id/progressBarAddStory"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:indeterminate="true"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvUsers"
+            app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline6"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="16dp" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:padding="16dp">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_end="16dp" />
+            <Button
+                android:id="@+id/btnPostStory"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="@color/navy"
+                android:text="@string/postStory"
+                app:layout_constraintEnd_toEndOf="@+id/descriptionTextField"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/descriptionTextField"
+                app:layout_constraintTop_toBottomOf="@+id/btnCamera" />
 
+            <ImageView
+                android:id="@+id/imgProfile"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_account"
+                app:layout_constraintStart_toStartOf="@+id/guideline6"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvUsers"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/guideline9"
+                app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                app:layout_constraintStart_toEndOf="@+id/imgProfile"
+                app:layout_constraintTop_toTopOf="@+id/guideline4"
+                tools:text="Username" />
+
+            <ImageView
+                android:id="@+id/previewImage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:adjustViewBounds="true"
+                app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                app:layout_constraintStart_toStartOf="@+id/guideline6"
+                app:layout_constraintTop_toBottomOf="@+id/tvUsers"
+                app:srcCompat="@drawable/ic_image_preview" />
+
+            <Button
+                android:id="@+id/btnCamera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="@color/navy"
+                android:text="@string/cameraChoose"
+                app:layout_constraintStart_toStartOf="@+id/guideline6"
+                app:layout_constraintTop_toBottomOf="@+id/descriptionTextField" />
+
+            <Button
+                android:id="@+id/btnGallery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="@color/navy"
+                android:text="@string/galleryChoose"
+                app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                app:layout_constraintTop_toBottomOf="@+id/descriptionTextField" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="0dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/descriptionTextField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:layout_constraintEnd_toEndOf="@+id/previewImage"
+                app:layout_constraintStart_toStartOf="@+id/previewImage"
+                app:layout_constraintTop_toBottomOf="@+id/previewImage">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tvDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="190dp"
+                    android:gravity="top"
+                    android:hint="@string/description"
+                    app:layout_constraintEnd_toEndOf="@+id/previewImage"
+                    app:layout_constraintStart_toStartOf="@+id/previewImage"
+                    app:layout_constraintTop_toBottomOf="@+id/btnCamera" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="16dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="16dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="35dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

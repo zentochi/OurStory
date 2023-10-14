@@ -14,6 +14,7 @@ import com.danuartadev.ourstory.data.remote.response.ListStoryItem
 import com.danuartadev.ourstory.databinding.ActivityMainBinding
 import com.danuartadev.ourstory.ui.ViewModelFactory
 import com.danuartadev.ourstory.ui.story.add.AddStoryActivity
+import com.danuartadev.ourstory.ui.story.add.CameraActivity
 import com.danuartadev.ourstory.ui.story.detail.DetailActivity
 import com.danuartadev.ourstory.ui.welcome.WelcomeActivity
 
@@ -49,6 +50,7 @@ class MainActivity : AppCompatActivity() {
 
             binding.refreshRvMain.setOnRefreshListener {
                 viewModel.getStories()
+                binding.rvMain.scrollToPosition(0)
                 binding.refreshRvMain.isRefreshing = false
             }
         }
@@ -58,6 +60,11 @@ class MainActivity : AppCompatActivity() {
         setupAction()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.getStories()
+        binding.rvMain.scrollToPosition(0)
+    }
     private fun setupView() {
         @Suppress("DEPRECATION")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -109,7 +116,6 @@ class MainActivity : AppCompatActivity() {
         binding.fabUpload.setOnClickListener {
             val moveIntent = Intent(this, AddStoryActivity::class.java)
             startActivity(moveIntent)
-            finish()
         }
     }
 
