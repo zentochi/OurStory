@@ -17,51 +17,6 @@ import retrofit2.HttpException
 
 class LoginViewModel(private val repository: UserRepository) : ViewModel() {
 
-//    private val _isLoadingLogin = MutableLiveData<Boolean>()
-//    val isLoadingLogin: LiveData<Boolean> = _isLoadingLogin
-
-//    private val _result: MutableLiveData<LoginResponse> = MutableLiveData()
-//    val result: LiveData<LoginResponse> get() = _result
-//    private val  _loginResponse = MutableLiveData<LoginResponse>()
-//    val loginResponse: LiveData<LoginResponse> = _loginResponse
-//
-//    val loginStatus: MutableLiveData<Boolean> = MutableLiveData()
-//
-//    val errorMessage = MutableLiveData<String?>()
-//
-//    fun login(email: String, password: String) {
-//        viewModelScope.launch {
-//            try {
-//                _isLoadingLogin.postValue(true)
-//                val response = repository.login(email, password)
-//                if (!response.error!!) {
-//                    val token = response.loginResult?.token
-//                    val userModel = UserModel(email, token ?: "missing token lur")
-//                    saveSession(userModel)
-//                    loginStatus.postValue(true) // Indicate successful login
-//                } else {
-//                    _isLoadingLogin.postValue(false)
-//                    val message = response.message
-//                    Log.d(TAG, message.toString())
-//                    loginStatus.postValue(false) // Indicate failed login
-//                }
-//            } catch (e: HttpException) {
-//                _isLoadingLogin.postValue(false)
-//                val jsonInString = e.response()?.errorBody()?.string()
-//                val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
-//                val errorMessageText = errorBody.message
-//                Log.d(TAG, "e: $errorMessageText")
-//                errorMessage.postValue(errorMessageText)
-//                loginStatus.postValue(false) // Indicate failed login
-//            } catch (e: Exception) {
-//                _isLoadingLogin.postValue(false)
-//                val errorMessageText = "An error occurred."
-//                errorMessage.postValue(errorMessageText)
-//                loginStatus.postValue(false) // Indicate failed login
-//            }
-//        }
-//    }
-
     fun login(email: String, password: String) = repository.login(email, password)
 
     fun saveSession(user: UserModel) {

@@ -54,8 +54,19 @@ class UserRepository private constructor(
         }
     }
 
-    suspend fun register(name: String, email: String, password: String): RegisterResponse {
-        return apiService.register(name, email, password)
+//    suspend fun register(name: String, email: String, password: String): RegisterResponse {
+//        return apiService.register(name, email, password)
+//    }
+    fun register(name: String, email: String, password: String) = liveData {
+        emit(Result.Loading)
+        try {
+            val successResponse = apiService.register(name, email, password)
+            emit(Result.Success(successResponse))
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, FileUploadResponse::class.java)
+            emit(Result.Error(errorResponse.message))
+        }
     }
 
 //    suspend fun getStories() : StoryResponse {
@@ -77,7 +88,7 @@ class UserRepository private constructor(
         emit(Result.Loading)
         val requestBody = description.toRequestBody("text/plain".toMediaType())
         val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaType())
-        val multipartBody =MultipartBody.Part.createFormData(
+        val multipartBody = MultipartBody.Part.createFormData(
             "photo",
             imageFile.name,
             requestImageFile

@@ -3,18 +3,25 @@ package com.danuartadev.ourstory.ui.main
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.danuartadev.ourstory.R
 import com.danuartadev.ourstory.databinding.ActivityMainBinding
 import com.danuartadev.ourstory.ui.ViewModelFactory
 import com.danuartadev.ourstory.ui.story.add.AddStoryActivity
 import com.danuartadev.ourstory.ui.welcome.WelcomeActivity
 import com.danuartadev.ourstory.utils.Result
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,22 +46,34 @@ class MainActivity : AppCompatActivity() {
 //                viewModel.isLoadingStories.observe(this) { isLoading ->
 //                    binding.mainProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
 //                }
+                setupRecyclerView()
+                viewStories()
+                setupView()
+                setupAction()
+
+                binding.refreshRvMain.setOnRefreshListener {
+                    viewStories()
+                    binding.refreshRvMain.isRefreshing = false
+                }
             }
             // logging status
 //            binding.tvError.visibility = View.VISIBLE
 //            binding.tvError.text = "current status:\n" +
 //                    "email:${user.email}\ntoken:${user.token}\nisLogin:${user.isLogin}"
-            setupRecyclerView()
-            viewStories()
-            setupView()
-            setupAction()
+        }
+    }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.option_menu, menu)
+        return true
+    }
 
-            binding.refreshRvMain.setOnRefreshListener {
-                viewStories()
-                binding.refreshRvMain.isRefreshing = false
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.action_logout -> {
+                viewModel.logout()
             }
         }
-
+        return super.onOptionsItemSelected(item)
     }
 
     private fun setupView() {
@@ -67,13 +86,10 @@ class MainActivity : AppCompatActivity() {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
             )
         }
-        supportActionBar?.hide()
+//        supportActionBar?.hide()
     }
 
     private fun setupAction() {
-        binding.logoutButton.setOnClickListener {
-            viewModel.logout()
-        }
         binding.fabUpload.setOnClickListener {
             val moveIntent = Intent(this, AddStoryActivity::class.java)
             startActivity(moveIntent)
@@ -87,46 +103,30 @@ class MainActivity : AppCompatActivity() {
         adapter = MainAdapter()
         binding.rvMain.adapter = adapter
 
-//        // Observe the stories data
-//        viewModel.getStoriesResponse.observe(this) { storyResponse ->
-//            if (!storyResponse.error!!) {
-//                adapter.submitList(storyResponse.listStory)
-//            } else {
-//                // Handle the error condition here
-//                Log.d(TAG, "Error fetching stories: ${storyResponse.message}")
-//            }
-//        }
-
-        // Handle the error message visibility
-//        viewModel.errorMessage.observe(this) { errorMessage ->
-//            if (errorMessage != null) {
-//                binding.tvErrorMain.visibility = View.VISIBLE
-//                binding.tvErrorMain.text = errorMessage
-//            } else {
-//                binding.tvErrorMain.visibility = View.GONE
-//            }
-//        }
-
     }
 
     private fun viewStories() {
-        viewModel.getStories().observe(this) { result ->
-            if (result != null) {
-                when (result) {
-                    is Result.Loading -> {
-                        showLoading(true)
-                    }
-                    is Result.Success -> {
-                        showLoading(false)
-                        adapter.submitList(result.data.listStory)
-                    }
-                    is Result.Error -> {
-                        showToast(result.error)
-                        showLoading(false)
+            viewModel.getStories().observe(this) { result ->
+                if (result != null) {
+                    when (result) {
+                        is Result.Loading -> {
+                            showLoading(true)
+                        }
+
+                        is Result.Success -> {
+                            showLoading(false)
+                            adapter.submitList(result.data.listStory)
+                            Log.d(TAG, "result: ${result.data.listStory}")
+                        }
+
+                        is Result.Error -> {
+                            showToast(result.error)
+                            showLoading(false)
+                        }
                     }
                 }
             }
-        }
+
     }
 
     private fun showToast(message: String) {

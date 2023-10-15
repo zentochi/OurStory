@@ -11,10 +11,10 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.danuartadev.ourstory.databinding.ActivitySignupBinding
 import com.danuartadev.ourstory.ui.ViewModelFactory
+import com.danuartadev.ourstory.utils.Result
 
 class SignupActivity : AppCompatActivity() {
 
@@ -28,34 +28,32 @@ class SignupActivity : AppCompatActivity() {
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.apply {
-            nameEditText.addTextChangedListener(createTextWatcher())
-            emailEditText.addTextChangedListener(createTextWatcher())
-            passwordEditText.addTextChangedListener(createTextWatcher())
-        }
-
         setupView()
         setupAction()
         playAnimation()
-        enableSignupButton()
+//        enableSignupButton()
     }
 
-    private fun observerRegister() {
-        viewModel.registerStatus.observe(this) { isSuccess ->
-            if (isSuccess) {
-                Toast.makeText(this, "Successfully Registered", Toast.LENGTH_SHORT).show()
-            } else {
-                viewModel.errorMessage.observe(this) { error ->
-                    if (!error.isNullOrBlank()) {
-                        Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
+    private fun registerAccount() {
+        val nameText = binding.nameEditText.text.toString()
+        val emailEditText = binding.emailEditText.text.toString()
+        val passwordText = binding.passwordEditText.text.toString()
+        viewModel.register(nameText, emailEditText, passwordText).observe(this) { result ->
+            if (result != null) {
+                when (result) {
+                    is Result.Loading -> {
+                        showLoading(true)
+                    }
+                    is Result.Success -> {
+                        showLoading(false)
+                        showToast(result.data.message.toString())
+                    }
+                    is Result.Error -> {
+                        showToast(result.error)
+                        showLoading(false)
                     }
                 }
             }
-        }
-        viewModel.isLoadingSignup.observe(this) {
-            showLoading(it)
         }
     }
 
@@ -67,35 +65,35 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    private fun createTextWatcher(): TextWatcher {
-        return object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // Not used in this case
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Not used in this case
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                enableSignupButton()
-            }
-        }
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
+//    private fun createTextWatcher(): TextWatcher {
+//        return object : TextWatcher {
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+//            }
+//
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//            }
+//
+//            override fun afterTextChanged(s: Editable?) {
+//                enableSignupButton()
+//            }
+//        }
+//    }
 
-    private fun enableSignupButton() {
-        val nameText = binding.nameEditText.text.toString()
-        val emailEditText = binding.emailEditText
-        val passwordText = binding.passwordEditText.text.toString()
 
-        // Check if email is valid (based on your custom edTextEmail)
-        val isEmailValid = emailEditText.error == null
-
-        val isSubmitButtonEnabled = nameText.isNotEmpty() && isEmailValid && passwordText.length >= 8
-
-        binding.signupButton.isEnabled = isSubmitButtonEnabled
-    }
+//    private fun enableSignupButton() {
+//        val nameText = binding.nameEditText.text.toString()
+//        val emailEditText = binding.emailEditText
+//        val passwordText = binding.passwordEditText.text.toString()
+//
+//        val isEmailValid = emailEditText.error == null
+//        val isSubmitButtonEnabled = nameText.isNotEmpty() && isEmailValid && passwordText.length >= 8
+//
+//        binding.signupButton.isEnabled = isSubmitButtonEnabled
+//    }
 
     private fun setupView() {
         @Suppress("DEPRECATION")
@@ -108,6 +106,12 @@ class SignupActivity : AppCompatActivity() {
             )
         }
         supportActionBar?.hide()
+
+//        binding.apply {
+//            nameEditText.addTextChangedListener(createTextWatcher())
+//            emailEditText.addTextChangedListener(createTextWatcher())
+//            passwordEditText.addTextChangedListener(createTextWatcher())
+//        }
     }
 
     private fun setupAction() {
@@ -115,18 +119,8 @@ class SignupActivity : AppCompatActivity() {
             val nameText = binding.nameEditText.text.toString()
             val emailText = binding.emailEditText.text.toString()
             val passwordText = binding.passwordEditText.text.toString()
-            observerRegister()
-            viewModel.register(nameText, emailText, passwordText)
-
-//            AlertDialog.Builder(this).apply {
-//                setTitle("Yeah!")
-//                setMessage("$nameText sudah jadi nih. Yuk, login dan belajar coding.")
-//                setPositiveButton("Lanjut") { _, _ ->
-//                    finish()
-//                }
-//                create()
-//                show()
-//            }
+            registerAccount()
+//            viewModel.register(nameText, emailText, passwordText)
         }
     }
 

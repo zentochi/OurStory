@@ -33,11 +33,10 @@ class LoginActivity : AppCompatActivity() {
         setupView()
         setupAction()
         playAnimation()
-        enableLoginButton()
+//        enableLoginButton()
     }
 
     private fun loginAccount() {
-        // to be improved
         val emailText = binding.emailEditText.text.toString()
         val passwordText = binding.passwordEditText.text.toString()
         viewModel.login(emailText, passwordText).observe(this) { result ->
@@ -63,26 +62,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
-//            if (isSuccess) {
-//                Toast.makeText(this, "Successfully Logged in", Toast.LENGTH_SHORT).show()
-//                showLoading(false)
-//                val intent = Intent(this, MainActivity::class.java)
-//                startActivity(intent)
-//                finish()
-//            } else {
-//                viewModel.errorMessage.observe(this) { error ->
-//                    if (!error.isNullOrBlank()) {
-//                        Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
-//                    } else {
-//                        Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//                showLoading(false)
-//            }
         }
-//        viewModel.isLoadingLogin.observe(this) {
-//            showLoading(it)
-//        }
 
     private fun showLoading(isLoading: Boolean) {
         binding.loginProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
@@ -91,28 +71,28 @@ class LoginActivity : AppCompatActivity() {
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
-    private fun createTextWatcher(): TextWatcher {
-        return object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
+//    private fun createTextWatcher(): TextWatcher {
+//        return object : TextWatcher {
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+//            }
+//
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//            }
+//
+//            override fun afterTextChanged(s: Editable?) {
+//                enableLoginButton()
+//            }
+//        }
+//    }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                enableLoginButton()
-            }
-        }
-    }
-
-    private fun enableLoginButton() {
-
-        val emailText = binding.emailEditText.text.toString()
-        val passwordText = binding.passwordEditText.text.toString()
-        val isEmailValid = binding.emailEditText.error == null
-        val isSubmitButtonEnabled = isEmailValid && passwordText.length >= 8
-        binding.loginButton.isEnabled = isSubmitButtonEnabled
-    }
+//    private fun enableLoginButton() {
+//
+//        val emailText = binding.emailEditText.text.toString()
+//        val passwordText = binding.passwordEditText.text.toString()
+//        val isEmailValid = binding.emailEditText.error == null
+//        val isSubmitButtonEnabled = isEmailValid && passwordText.length >= 8
+//        binding.loginButton.isEnabled = isSubmitButtonEnabled
+//    }
 
     private fun setupView() {
         @Suppress("DEPRECATION") if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -122,10 +102,10 @@ class LoginActivity : AppCompatActivity() {
         }
         supportActionBar?.hide()
         
-        binding.apply {
-            emailEditText.addTextChangedListener(createTextWatcher())
-            passwordEditText.addTextChangedListener(createTextWatcher())
-        }
+//        binding.apply {
+//            emailEditText.addTextChangedListener(createTextWatcher())
+//            passwordEditText.addTextChangedListener(createTextWatcher())
+//        }
     }
 
     private fun setupAction() {
