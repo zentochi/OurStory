@@ -9,7 +9,6 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import com.danuartadev.ourstory.R
 import com.danuartadev.ourstory.databinding.ActivityWelcomeBinding
 import com.danuartadev.ourstory.ui.login.LoginActivity
 import com.danuartadev.ourstory.ui.signup.SignupActivity
@@ -70,5 +69,10 @@ class WelcomeActivity : AppCompatActivity() {
             playSequentially(title, desc, together)
             start()
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finishAffinity()
     }
 }

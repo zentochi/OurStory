@@ -2,10 +2,9 @@ package com.danuartadev.ourstory.ui.signup
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
@@ -14,6 +13,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.danuartadev.ourstory.databinding.ActivitySignupBinding
 import com.danuartadev.ourstory.ui.ViewModelFactory
+import com.danuartadev.ourstory.ui.welcome.WelcomeActivity
 import com.danuartadev.ourstory.utils.Result
 
 class SignupActivity : AppCompatActivity() {
@@ -31,7 +31,6 @@ class SignupActivity : AppCompatActivity() {
         setupView()
         setupAction()
         playAnimation()
-//        enableSignupButton()
     }
 
     private fun registerAccount() {
@@ -46,6 +45,9 @@ class SignupActivity : AppCompatActivity() {
                     }
                     is Result.Success -> {
                         showLoading(false)
+                        val intent = Intent(this, WelcomeActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                        startActivity(intent)
                         showToast(result.data.message.toString())
                     }
                     is Result.Error -> {
@@ -69,31 +71,6 @@ class SignupActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-//    private fun createTextWatcher(): TextWatcher {
-//        return object : TextWatcher {
-//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-//            }
-//
-//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//            }
-//
-//            override fun afterTextChanged(s: Editable?) {
-//                enableSignupButton()
-//            }
-//        }
-//    }
-
-
-//    private fun enableSignupButton() {
-//        val nameText = binding.nameEditText.text.toString()
-//        val emailEditText = binding.emailEditText
-//        val passwordText = binding.passwordEditText.text.toString()
-//
-//        val isEmailValid = emailEditText.error == null
-//        val isSubmitButtonEnabled = nameText.isNotEmpty() && isEmailValid && passwordText.length >= 8
-//
-//        binding.signupButton.isEnabled = isSubmitButtonEnabled
-//    }
 
     private fun setupView() {
         @Suppress("DEPRECATION")
@@ -107,18 +84,10 @@ class SignupActivity : AppCompatActivity() {
         }
         supportActionBar?.hide()
 
-//        binding.apply {
-//            nameEditText.addTextChangedListener(createTextWatcher())
-//            emailEditText.addTextChangedListener(createTextWatcher())
-//            passwordEditText.addTextChangedListener(createTextWatcher())
-//        }
     }
 
     private fun setupAction() {
         binding.signupButton.setOnClickListener {
-            val nameText = binding.nameEditText.text.toString()
-            val emailText = binding.emailEditText.text.toString()
-            val passwordText = binding.passwordEditText.text.toString()
             registerAccount()
 //            viewModel.register(nameText, emailText, passwordText)
         }

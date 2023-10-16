@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OurStory</string>
+    <string name="title_login_page">Bagikan ceritamu dengan kita :)</string>
+    <string name="message_login_page">Masuk dengan akun terdaftar</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="title_signup_page">Bergabung bersama kami!</string>
+    <string name="name">Nama</string>
+    <string name="signup">Signup</string>
+    <string name="logout">Logout</string>
+    <string name="message_main_page">Hello, this is MainACtivity!\n</string>
+    <string name="title_welcome_page">Selamat datang di OurStory</string>
+    <string name="message_welcome_page">OurStory adalah tempat yang aman untuk berbagi cerita dan berinteraksi dengan orang lain</string>
+    <string name="password_helper_text">Isi dengan lebih dari 8 karakter</string>
+    <string name="email_helper_text">Gunakan email vaild</string>
+    <string name="name_helper_text">Nama pada tampilan</string>
+    <string name="password_login_helper_text">Masukkan password</string>
+    <string name="email_login_helper_text">Masukkan email yang teregistrasi</string>
+    <string name="description">Deskripsi</string>
+    <string name="cameraChoose">KameraX</string>
+    <string name="galleryChoose">Gallery</string>
+    <string name="postStory">Kirim cerita</string>
+    <string name="empty_image_warning">Ngga ada foto yang dipilih</string>
+    <string name="language">Bahasa</string>
+</resources>

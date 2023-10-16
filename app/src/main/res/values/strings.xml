@@ -22,4 +22,5 @@
     <string name="galleryChoose">Gallery</string>
     <string name="postStory">Submit story</string>
     <string name="empty_image_warning">No image provided</string>
+    <string name="language">Language</string>
 </resources>

@@ -4,19 +4,18 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import com.danuartadev.ourstory.data.pref.UserModel
 import com.danuartadev.ourstory.databinding.ActivityLoginBinding
 import com.danuartadev.ourstory.ui.ViewModelFactory
-import com.danuartadev.ourstory.ui.main.MainActivity
+import com.danuartadev.ourstory.ui.story.main.MainActivity
 import com.danuartadev.ourstory.utils.Result
 
 class LoginActivity : AppCompatActivity() {
@@ -33,7 +32,6 @@ class LoginActivity : AppCompatActivity() {
         setupView()
         setupAction()
         playAnimation()
-//        enableLoginButton()
     }
 
     private fun loginAccount() {
@@ -48,11 +46,12 @@ class LoginActivity : AppCompatActivity() {
                     is Result.Success -> {
                         val email = binding.emailEditText.text.toString()
                         val token = result.data.loginResult?.token ?: ""
-                        viewModel.saveSession(UserModel(email, token))
+                        Log.d(TAG, "Result.Success token: $token")
+                        viewModel.saveSession(UserModel(email, token, true))
                         result.data.message?.let { showToast(it) }
                         showLoading(false)
                         val intent = Intent(this, MainActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+//                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                         startActivity(intent)
                     }
                     is Result.Error -> {
@@ -71,29 +70,6 @@ class LoginActivity : AppCompatActivity() {
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
-//    private fun createTextWatcher(): TextWatcher {
-//        return object : TextWatcher {
-//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-//            }
-//
-//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//            }
-//
-//            override fun afterTextChanged(s: Editable?) {
-//                enableLoginButton()
-//            }
-//        }
-//    }
-
-//    private fun enableLoginButton() {
-//
-//        val emailText = binding.emailEditText.text.toString()
-//        val passwordText = binding.passwordEditText.text.toString()
-//        val isEmailValid = binding.emailEditText.error == null
-//        val isSubmitButtonEnabled = isEmailValid && passwordText.length >= 8
-//        binding.loginButton.isEnabled = isSubmitButtonEnabled
-//    }
-
     private fun setupView() {
         @Suppress("DEPRECATION") if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.hide(WindowInsets.Type.statusBars())
@@ -102,15 +78,10 @@ class LoginActivity : AppCompatActivity() {
         }
         supportActionBar?.hide()
         
-//        binding.apply {
-//            emailEditText.addTextChangedListener(createTextWatcher())
-//            passwordEditText.addTextChangedListener(createTextWatcher())
-//        }
     }
 
     private fun setupAction() {
         binding.loginButton.setOnClickListener {
-            val emailText = binding.emailEditText.text.toString()
             loginAccount()
 //            viewModel.login(emailText, passwordText)
         }
@@ -148,5 +119,9 @@ class LoginActivity : AppCompatActivity() {
             )
             startDelay = 100
         }.start()
+    }
+
+    companion object {
+        private const val TAG = "LoginActivity"
     }
 }

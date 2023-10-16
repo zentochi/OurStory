@@ -1,6 +1,5 @@
 package com.danuartadev.ourstory.data.remote.retrofit
 
-import com.danuartadev.ourstory.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -11,11 +10,6 @@ class ApiConfig {
     companion object {
         fun getApiService(token: String): ApiService {
             val loggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-//            val loggingInterceptor = if(BuildConfig.DEBUG) {
-//                HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-//            } else {
-//                HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.NONE)
-//            }
             val authInterceptor = Interceptor { chain ->
                 val req = chain.request()
                 val requestHeaders = req.newBuilder()
@@ -24,8 +18,8 @@ class ApiConfig {
                 chain.proceed(requestHeaders)
             }
             val client = OkHttpClient.Builder()
-                .addInterceptor(authInterceptor)
                 .addInterceptor(loggingInterceptor)
+                .addInterceptor(authInterceptor)
                 .build()
             val retrofit = Retrofit.Builder()
                 .baseUrl("https://story-api.dicoding.dev/v1/")

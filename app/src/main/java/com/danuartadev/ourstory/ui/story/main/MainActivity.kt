@@ -1,4 +1,4 @@
-package com.danuartadev.ourstory.ui.main
+package com.danuartadev.ourstory.ui.story.main
 
 import android.content.Intent
 import android.os.Build
@@ -13,7 +13,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.danuartadev.ourstory.R
 import com.danuartadev.ourstory.databinding.ActivityMainBinding
@@ -21,7 +20,6 @@ import com.danuartadev.ourstory.ui.ViewModelFactory
 import com.danuartadev.ourstory.ui.story.add.AddStoryActivity
 import com.danuartadev.ourstory.ui.welcome.WelcomeActivity
 import com.danuartadev.ourstory.utils.Result
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,36 +39,49 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this, WelcomeActivity::class.java))
                 finish()
             } else {
-
-                // Observe the loading status
-//                viewModel.isLoadingStories.observe(this) { isLoading ->
-//                    binding.mainProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-//                }
-                setupRecyclerView()
-                viewStories()
+                //is logged in
                 setupView()
+                getStories()
+                setupRecyclerView()
                 setupAction()
-
-                binding.refreshRvMain.setOnRefreshListener {
-                    viewStories()
-                    binding.refreshRvMain.isRefreshing = false
-                }
             }
             // logging status
-//            binding.tvError.visibility = View.VISIBLE
-//            binding.tvError.text = "current status:\n" +
-//                    "email:${user.email}\ntoken:${user.token}\nisLogin:${user.isLogin}"
+            binding.tvError.visibility = View.VISIBLE
+            binding.tvError.text = "current status:\n" +
+                    "email:${user.email}\n" +
+                    "token:${user.token}\n" +
+                    "isLogin:${user.isLogin}"
+            showToast(user.email)
+        }
+        binding.refreshRvMain.setOnRefreshListener {
+            Log.d(TAG, "onRefresh: ${binding.refreshRvMain.isRefreshing}")
+            getStories()
+            binding.refreshRvMain.isRefreshing = false
         }
     }
+//    override fun onResume() {
+//        super.onResume()
+//        viewStories()
+//    }
+
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.option_menu, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.action_logout -> {
                 viewModel.logout()
+                val intent = Intent(this, WelcomeActivity::class.java)
+//                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+            }
+
+            R.id.action_language -> {
+                val intent = Intent(Settings.ACTION_LOCALE_SETTINGS)
+                startActivity(intent)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -86,7 +97,6 @@ class MainActivity : AppCompatActivity() {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
             )
         }
-//        supportActionBar?.hide()
     }
 
     private fun setupAction() {
@@ -95,38 +105,37 @@ class MainActivity : AppCompatActivity() {
             startActivity(moveIntent)
         }
     }
+
     private fun setupRecyclerView() {
         val layoutManager = LinearLayoutManager(this)
         binding.rvMain.layoutManager = layoutManager
 
-        // Initialize the adapter and set it to the RecyclerView
         adapter = MainAdapter()
         binding.rvMain.adapter = adapter
-
     }
 
-    private fun viewStories() {
-            viewModel.getStories().observe(this) { result ->
-                if (result != null) {
-                    when (result) {
-                        is Result.Loading -> {
-                            showLoading(true)
-                        }
+    private fun getStories() {
+        viewModel.getStories().observe(this) { result ->
+            if (result != null) {
+                when (result) {
+                    is Result.Loading -> {
+                        showLoading(true)
+                    }
 
-                        is Result.Success -> {
-                            showLoading(false)
-                            adapter.submitList(result.data.listStory)
-                            Log.d(TAG, "result: ${result.data.listStory}")
-                        }
+                    is Result.Success -> {
+                        showLoading(false)
+                        adapter.submitList(result.data.listStory)
+                        Log.d(TAG, "result: ${result.data.listStory}")
+                    }
 
-                        is Result.Error -> {
-                            showToast(result.error)
-                            showLoading(false)
-                        }
+                    is Result.Error -> {
+                        showToast(result.error)
+                        Log.d(TAG, "result: ${result.error}")
+                        showLoading(false)
                     }
                 }
             }
-
+        }
     }
 
     private fun showToast(message: String) {
@@ -134,7 +143,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showLoading(isLoading: Boolean) {
-            binding.mainProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        binding.mainProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     companion object {

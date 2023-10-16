@@ -1,4 +1,4 @@
-package com.danuartadev.ourstory.ui.main
+package com.danuartadev.ourstory.ui.story.main
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -55,4 +55,3 @@ class MainAdapter : ListAdapter<ListStoryItem, MainAdapter.MainViewHolder>(DIFF_
         }
     }
 }
-

@@ -8,6 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
 import androidx.appcompat.widget.AppCompatEditText
+import com.danuartadev.ourstory.R
 
 class edTextPassword : AppCompatEditText, OnTouchListener{
 
@@ -26,25 +27,23 @@ class edTextPassword : AppCompatEditText, OnTouchListener{
     private fun init() {
         addTextChangedListener (object : TextWatcher{
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-//                TODO("Not yet implemented")
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s.toString().length < 8 || s.toString().isEmpty()) {
-                    setError("Insert a password character more than 8", null)
+                    val errorMessage = context.getString(R.string.password_helper_text)
+                    setError(errorMessage, null)
                 } else {
                     error = null
                 }
             }
 
             override fun afterTextChanged(s: Editable?) {
-//                TODO("Not yet implemented")
             }
         })
     }
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-//        TODO("Not yet implemented")
         return false
     }
 

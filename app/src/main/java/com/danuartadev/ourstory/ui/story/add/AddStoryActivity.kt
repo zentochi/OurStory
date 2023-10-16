@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.danuartadev.ourstory.R
 import com.danuartadev.ourstory.databinding.ActivityAddStoryBinding
 import com.danuartadev.ourstory.ui.ViewModelFactory
-import com.danuartadev.ourstory.ui.main.MainActivity
+import com.danuartadev.ourstory.ui.story.main.MainActivity
 import com.danuartadev.ourstory.utils.Result
 import com.danuartadev.ourstory.utils.getImageUri
 import com.danuartadev.ourstory.utils.reduceFileImage
@@ -87,6 +87,7 @@ class AddStoryActivity : AppCompatActivity() {
                         }
                         is Result.Success -> {
                             showToast(result.data.message)
+                            Log.d(TAG, "${result.data.message}")
                             showLoading(false)
                             val intent = Intent(this, MainActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
@@ -94,6 +95,7 @@ class AddStoryActivity : AppCompatActivity() {
                         }
                         is Result.Error -> {
                             showToast(result.error)
+                            Log.d(TAG, "${result.error}")
                             showLoading(false)
                         }
                     }
@@ -133,6 +135,10 @@ class AddStoryActivity : AppCompatActivity() {
     }
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    companion object {
+        private const val TAG = "AddStoryActivity"
     }
 
 }

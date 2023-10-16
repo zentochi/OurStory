@@ -1,22 +1,20 @@
 package com.danuartadev.ourstory.data
 
+import android.util.Log
 import androidx.lifecycle.liveData
 import com.danuartadev.ourstory.data.pref.UserModel
 import com.danuartadev.ourstory.data.pref.UserPreference
 import com.danuartadev.ourstory.data.remote.response.FileUploadResponse
-import com.danuartadev.ourstory.data.remote.response.LoginResponse
-import com.danuartadev.ourstory.data.remote.response.RegisterResponse
-import com.danuartadev.ourstory.data.remote.response.StoryResponse
 import com.danuartadev.ourstory.data.remote.retrofit.ApiService
-import kotlinx.coroutines.flow.Flow
-import java.io.File
 import com.danuartadev.ourstory.utils.Result
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.Flow
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.HttpException
+import java.io.File
 
 
 class UserRepository private constructor(
@@ -36,51 +34,58 @@ class UserRepository private constructor(
         userPreference.logout()
     }
 
-//    suspend fun login(email: String, password: String): LoginResponse {
-//        return apiService.login(email, password)
-//    }
     fun login(email: String, password: String) = liveData {
         emit(Result.Loading)
         try {
             val successResponse = apiService.login(email, password)
-            emit(Result.Success(successResponse))
+            Log.d(TAG, "response: $successResponse")
             val token = successResponse.loginResult?.token ?: ""
-            val userModel = UserModel(email, token, true)
-            userPreference.saveSession(userModel)
+            Log.d(TAG, "UserModel status: $email $token isLogin=true")
+//            val userModel = UserModel(email, token, true)
+//            userPreference.saveSession(userModel)
+            emit(Result.Success(successResponse))
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()
             val errorResponse = Gson().fromJson(errorBody, FileUploadResponse::class.java)
+            Log.d(TAG, "response: ${errorResponse.message}")
             emit(Result.Error(errorResponse.message))
+        } catch (e: Exception) {
+            Log.e(TAG, "response: ${e.message}")
+            emit(Result.Error("An unexpected error occurred. ${e.message}"))
         }
     }
 
-//    suspend fun register(name: String, email: String, password: String): RegisterResponse {
-//        return apiService.register(name, email, password)
-//    }
     fun register(name: String, email: String, password: String) = liveData {
         emit(Result.Loading)
         try {
             val successResponse = apiService.register(name, email, password)
+            Log.d(TAG, "response: $successResponse")
             emit(Result.Success(successResponse))
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()
             val errorResponse = Gson().fromJson(errorBody, FileUploadResponse::class.java)
+            Log.d(TAG, "$errorResponse")
             emit(Result.Error(errorResponse.message))
+        } catch (e: Exception) {
+            Log.e(TAG, "response: ${e.message}")
+            emit(Result.Error("An unexpected error occurred. ${e.message}"))
         }
     }
 
-//    suspend fun getStories() : StoryResponse {
-//        return apiService.getStories()
-//    }
     fun getStories() = liveData {
         emit(Result.Loading)
         try {
             val successResponse = apiService.getStories()
+            Log.d(TAG, "$successResponse")
             emit(Result.Success(successResponse))
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()
             val errorResponse = Gson().fromJson(errorBody, FileUploadResponse::class.java)
+            Log.d(TAG, "$errorResponse")
             emit(Result.Error(errorResponse.message))
+        } catch (e: Exception) {
+            Log.e(TAG, "response: ${e.message}")
+            emit(Result.Error("An unexpected error occurred. ${e.message}"))
         }
     }
 
@@ -95,21 +100,28 @@ class UserRepository private constructor(
         )
         try {
             val successResponse = apiService.uploadStory(multipartBody, requestBody)
+            Log.d(TAG, "$successResponse")
             emit(Result.Success(successResponse))
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()
             val errorResponse = Gson().fromJson(errorBody, FileUploadResponse::class.java)
+            Log.d(TAG, "$errorResponse")
             emit(Result.Error(errorResponse.message))
+        } catch (e: Exception) {
+            Log.e(TAG, "response: ${e.message}")
+            emit(Result.Error("An unexpected error occurred. ${e.message}"))
         }
     }
 
 
     companion object {
-        @Volatile
-        private var instance: UserRepository? = null
+        private const val TAG = "UserRepository"
+//        @Volatile
+//        private var instance: UserRepository? = null
         fun getInstance(userPreference: UserPreference, apiService: ApiService): UserRepository =
-            instance ?: synchronized(this) {
-                instance ?: UserRepository(userPreference, apiService)
-            }.also { instance = it }
+        UserRepository(userPreference, apiService)
+//            instance ?: synchronized(this) {
+//                instance ?: UserRepository(userPreference, apiService)
+//            }.also { instance = it }
     }
 }
