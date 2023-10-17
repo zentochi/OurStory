@@ -58,12 +58,13 @@
             android:id="@+id/imgStory"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:scaleType="centerInside"
+            android:transitionName="imgStory"
             app:layout_constraintEnd_toStartOf="@+id/guideline8"
             app:layout_constraintStart_toEndOf="@+id/guideline5"
             app:layout_constraintTop_toBottomOf="@id/guideline3"
-            tools:src="@tools:sample/backgrounds/scenic" />
+            tools:src="@tools:sample/avatars" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline8"
@@ -76,7 +77,8 @@
             android:id="@+id/tvUsernameDesc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
+            android:transitionName="tvUsernameDesc"
             app:layout_constraintEnd_toStartOf="@+id/guideline8"
             app:layout_constraintStart_toStartOf="@+id/guideline5"
             app:layout_constraintTop_toBottomOf="@+id/imgStory"

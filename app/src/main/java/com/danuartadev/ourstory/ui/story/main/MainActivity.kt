@@ -39,19 +39,11 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this, WelcomeActivity::class.java))
                 finish()
             } else {
-                //is logged in
                 setupView()
                 getStories()
                 setupRecyclerView()
                 setupAction()
             }
-            // logging status
-            binding.tvError.visibility = View.VISIBLE
-            binding.tvError.text = "current status:\n" +
-                    "email:${user.email}\n" +
-                    "token:${user.token}\n" +
-                    "isLogin:${user.isLogin}"
-            showToast(user.email)
         }
         binding.refreshRvMain.setOnRefreshListener {
             Log.d(TAG, "onRefresh: ${binding.refreshRvMain.isRefreshing}")
@@ -59,11 +51,6 @@ class MainActivity : AppCompatActivity() {
             binding.refreshRvMain.isRefreshing = false
         }
     }
-//    override fun onResume() {
-//        super.onResume()
-//        viewStories()
-//    }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.option_menu, menu)
@@ -75,7 +62,6 @@ class MainActivity : AppCompatActivity() {
             R.id.action_logout -> {
                 viewModel.logout()
                 val intent = Intent(this, WelcomeActivity::class.java)
-//                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
             }
 

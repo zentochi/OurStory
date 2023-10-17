@@ -24,4 +24,5 @@
     <string name="postStory">Kirim cerita</string>
     <string name="empty_image_warning">Ngga ada foto yang dipilih</string>
     <string name="language">Bahasa</string>
+    <string name="buttonupload">Tombol Unggah</string>
 </resources>

@@ -1,11 +1,14 @@
 package com.danuartadev.ourstory.ui.story.main
 
+import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.core.util.Pair
 import com.bumptech.glide.Glide
 import com.danuartadev.ourstory.data.remote.response.ListStoryItem
 import com.danuartadev.ourstory.databinding.ItemMainBinding
@@ -14,6 +17,7 @@ import com.danuartadev.ourstory.ui.story.detail.DetailActivity
 class MainAdapter : ListAdapter<ListStoryItem, MainAdapter.MainViewHolder>(DIFF_CALLBACK) {
 
     class MainViewHolder(private val binding: ItemMainBinding) : RecyclerView.ViewHolder(binding.root) {
+
         fun bind(story: ListStoryItem) {
             binding.userName.text = story.name
             binding.userStory.text = story.description
@@ -23,12 +27,18 @@ class MainAdapter : ListAdapter<ListStoryItem, MainAdapter.MainViewHolder>(DIFF_
                 .into(binding.imgUser)
 
             itemView.setOnClickListener {
+                val optionsCompat: ActivityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    itemView.context as Activity,
+                    Pair(binding.imgUser, "imgStory"),
+                    Pair(binding.userStory, "tvUsernameDesc")
+                )
                 val intent = Intent(itemView.context, DetailActivity::class.java)
-                // Pass the selected item using Parcelable
                 val listStoryItems = ArrayList<ListStoryItem>()
                 listStoryItems.add(story)
                 intent.putParcelableArrayListExtra("list_story_item", listStoryItems)
-                itemView.context.startActivity(intent)
+                itemView.context.startActivity(intent,
+                    optionsCompat.toBundle()
+                )
             }
         }
     }

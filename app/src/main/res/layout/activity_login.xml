@@ -130,7 +130,7 @@
             tools:ignore="SpeakableTextPresentCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.danuartadev.ourstory.ui.customView.btnLogin
+    <Button
         android:id="@+id/loginButton"
         android:layout_width="0dp"
         android:layout_height="64dp"

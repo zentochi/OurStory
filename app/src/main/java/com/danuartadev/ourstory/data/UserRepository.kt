@@ -41,8 +41,6 @@ class UserRepository private constructor(
             Log.d(TAG, "response: $successResponse")
             val token = successResponse.loginResult?.token ?: ""
             Log.d(TAG, "UserModel status: $email $token isLogin=true")
-//            val userModel = UserModel(email, token, true)
-//            userPreference.saveSession(userModel)
             emit(Result.Success(successResponse))
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()
@@ -55,7 +53,7 @@ class UserRepository private constructor(
         }
     }
 
-    fun register(name: String, email: String, password: String) = liveData {
+    suspend fun register(name: String, email: String, password: String) = liveData {
         emit(Result.Loading)
         try {
             val successResponse = apiService.register(name, email, password)
@@ -89,7 +87,7 @@ class UserRepository private constructor(
         }
     }
 
-    fun uploadStory(imageFile: File, description: String) = liveData {
+    suspend fun uploadStory(imageFile: File, description: String) = liveData {
         emit(Result.Loading)
         val requestBody = description.toRequestBody("text/plain".toMediaType())
         val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaType())
@@ -116,12 +114,7 @@ class UserRepository private constructor(
 
     companion object {
         private const val TAG = "UserRepository"
-//        @Volatile
-//        private var instance: UserRepository? = null
         fun getInstance(userPreference: UserPreference, apiService: ApiService): UserRepository =
         UserRepository(userPreference, apiService)
-//            instance ?: synchronized(this) {
-//                instance ?: UserRepository(userPreference, apiService)
-//            }.also { instance = it }
     }
 }

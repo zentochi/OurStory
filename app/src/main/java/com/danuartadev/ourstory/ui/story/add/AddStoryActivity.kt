@@ -87,7 +87,7 @@ class AddStoryActivity : AppCompatActivity() {
                         }
                         is Result.Success -> {
                             showToast(result.data.message)
-                            Log.d(TAG, "${result.data.message}")
+                            Log.d(TAG, result.data.message)
                             showLoading(false)
                             val intent = Intent(this, MainActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
@@ -95,7 +95,7 @@ class AddStoryActivity : AppCompatActivity() {
                         }
                         is Result.Error -> {
                             showToast(result.error)
-                            Log.d(TAG, "${result.error}")
+                            Log.d(TAG, result.error)
                             showLoading(false)
                         }
                     }

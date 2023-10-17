@@ -37,7 +37,6 @@ class ViewModelFactory(private val repository: UserRepository) :
     }
 
     companion object {
-        //        @Volatile
         @JvmStatic
         fun getInstance(context: Context): ViewModelFactory {
             return ViewModelFactory(Injection.provideRepository(context))

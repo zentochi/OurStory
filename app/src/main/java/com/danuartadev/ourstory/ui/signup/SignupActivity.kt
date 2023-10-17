@@ -13,7 +13,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.danuartadev.ourstory.databinding.ActivitySignupBinding
 import com.danuartadev.ourstory.ui.ViewModelFactory
-import com.danuartadev.ourstory.ui.welcome.WelcomeActivity
+import com.danuartadev.ourstory.ui.login.LoginActivity
 import com.danuartadev.ourstory.utils.Result
 
 class SignupActivity : AppCompatActivity() {
@@ -45,8 +45,7 @@ class SignupActivity : AppCompatActivity() {
                     }
                     is Result.Success -> {
                         showLoading(false)
-                        val intent = Intent(this, WelcomeActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                        val intent = Intent(this, LoginActivity::class.java)
                         startActivity(intent)
                         showToast(result.data.message.toString())
                     }
