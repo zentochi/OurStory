@@ -48,7 +48,9 @@ class LoginActivity : AppCompatActivity() {
                         val token = result.data.loginResult?.token ?: ""
                         Log.d(TAG, "Result.Success token: $token")
                         viewModel.saveSession(UserModel(email, token, true))
-                        result.data.message?.let { showToast(it) }
+                        result.data.loginResult?.name.let {
+                            showToast(it.toString())
+                        }
                         showLoading(false)
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)

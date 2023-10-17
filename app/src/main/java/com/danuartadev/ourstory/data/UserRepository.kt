@@ -53,7 +53,7 @@ class UserRepository private constructor(
         }
     }
 
-    suspend fun register(name: String, email: String, password: String) = liveData {
+     fun register(name: String, email: String, password: String) = liveData {
         emit(Result.Loading)
         try {
             val successResponse = apiService.register(name, email, password)
@@ -87,7 +87,7 @@ class UserRepository private constructor(
         }
     }
 
-    suspend fun uploadStory(imageFile: File, description: String) = liveData {
+    fun uploadStory(imageFile: File, description: String) = liveData {
         emit(Result.Loading)
         val requestBody = description.toRequestBody("text/plain".toMediaType())
         val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaType())
