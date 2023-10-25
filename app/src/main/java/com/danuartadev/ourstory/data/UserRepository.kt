@@ -73,7 +73,7 @@ class UserRepository private constructor(
     fun getStories() = liveData {
         emit(Result.Loading)
         try {
-            val successResponse = apiService.getStories()
+            val successResponse = apiService.getStories(1, 20)
             Log.d(TAG, "$successResponse")
             emit(Result.Success(successResponse))
         } catch (e: HttpException) {
