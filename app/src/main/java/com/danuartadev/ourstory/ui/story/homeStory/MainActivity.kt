@@ -1,4 +1,4 @@
-package com.danuartadev.ourstory.ui.story.main
+package com.danuartadev.ourstory.ui.story.homeStory
 
 import android.content.Intent
 import android.os.Build
@@ -17,7 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.danuartadev.ourstory.R
 import com.danuartadev.ourstory.databinding.ActivityMainBinding
 import com.danuartadev.ourstory.ui.ViewModelFactory
-import com.danuartadev.ourstory.ui.story.add.AddStoryActivity
+import com.danuartadev.ourstory.ui.story.addStory.AddStoryActivity
+import com.danuartadev.ourstory.ui.story.viewMaps.MapsActivity
 import com.danuartadev.ourstory.ui.welcome.WelcomeActivity
 import com.danuartadev.ourstory.utils.Result
 
@@ -38,16 +39,20 @@ class MainActivity : AppCompatActivity() {
             if (!user.isLogin) {
                 startActivity(Intent(this, WelcomeActivity::class.java))
                 finish()
+                viewModel.logout()
             } else {
+                val name = user.name
                 setupView()
                 getStories()
                 setupRecyclerView()
-                setupAction()
+                setupAction(name)
             }
         }
         binding.refreshRvMain.setOnRefreshListener {
-            Log.d(TAG, "onRefresh: ${binding.refreshRvMain.isRefreshing}")
             getStories()
+            binding.rvMain.postDelayed({
+                binding.rvMain.scrollToPosition(0)
+            }, 200)
             binding.refreshRvMain.isRefreshing = false
         }
     }
@@ -61,12 +66,14 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.action_logout -> {
                 viewModel.logout()
-                val intent = Intent(this, WelcomeActivity::class.java)
-                startActivity(intent)
             }
 
             R.id.action_language -> {
                 val intent = Intent(Settings.ACTION_LOCALE_SETTINGS)
+                startActivity(intent)
+            }
+            R.id.action_map -> {
+                val intent = Intent(this@MainActivity, MapsActivity::class.java)
                 startActivity(intent)
             }
         }
@@ -85,10 +92,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupAction() {
+    private fun setupAction(name: String) {
         binding.fabUpload.setOnClickListener {
-            val moveIntent = Intent(this, AddStoryActivity::class.java)
-            startActivity(moveIntent)
+            val intent = Intent(this, AddStoryActivity::class.java)
+            intent.putExtra(NAME, name)
+            startActivity(intent)
         }
     }
 
@@ -107,7 +115,6 @@ class MainActivity : AppCompatActivity() {
                     is Result.Loading -> {
                         showLoading(true)
                     }
-
                     is Result.Success -> {
                         showLoading(false)
                         adapter.submitList(result.data.listStory)
@@ -134,6 +141,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "MainActivity"
+        private const val NAME = "name"
     }
 
 }

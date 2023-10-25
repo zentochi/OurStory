@@ -25,4 +25,6 @@
     <string name="empty_image_warning">Ngga ada foto yang dipilih</string>
     <string name="language">Bahasa</string>
     <string name="buttonupload">Tombol Unggah</string>
+    <string name="username_upload">Unggah sebagai %1$s</string>
+    <string name="username_main">Selamat datang, %1$s</string>
 </resources>

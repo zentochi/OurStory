@@ -1,6 +1,7 @@
 package com.danuartadev.ourstory.data.remote.retrofit
 
 import com.danuartadev.ourstory.data.remote.response.FileUploadResponse
+import com.danuartadev.ourstory.data.remote.response.ListStoryItem
 import com.danuartadev.ourstory.data.remote.response.LoginResponse
 import com.danuartadev.ourstory.data.remote.response.RegisterResponse
 import com.danuartadev.ourstory.data.remote.response.StoryResponse
@@ -12,10 +13,17 @@ import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Query
 
 interface ApiService {
     @GET("stories")
-    suspend fun getStories(): StoryResponse
+    suspend fun getStories(
+    ): StoryResponse
+
+    @GET("stories")
+    suspend fun getStoriesWithLocation(
+        @Query("location") location: Int = 1
+    ): StoryResponse
 
     @FormUrlEncoded
     @POST("register")

@@ -1,4 +1,4 @@
-package com.danuartadev.ourstory.ui.story.main
+package com.danuartadev.ourstory.ui.story.homeStory
 
 import android.app.Activity
 import android.content.Intent
@@ -12,7 +12,7 @@ import androidx.core.util.Pair
 import com.bumptech.glide.Glide
 import com.danuartadev.ourstory.data.remote.response.ListStoryItem
 import com.danuartadev.ourstory.databinding.ItemMainBinding
-import com.danuartadev.ourstory.ui.story.detail.DetailActivity
+import com.danuartadev.ourstory.ui.story.detailStory.DetailActivity
 
 class MainAdapter : ListAdapter<ListStoryItem, MainAdapter.MainViewHolder>(DIFF_CALLBACK) {
 
@@ -32,13 +32,11 @@ class MainAdapter : ListAdapter<ListStoryItem, MainAdapter.MainViewHolder>(DIFF_
                     Pair(binding.imgUser, "imgStory"),
                     Pair(binding.userStory, "tvUsernameDesc")
                 )
-                val intent = Intent(itemView.context, DetailActivity::class.java)
                 val listStoryItems = ArrayList<ListStoryItem>()
                 listStoryItems.add(story)
+                val intent = Intent(itemView.context, DetailActivity::class.java)
                 intent.putParcelableArrayListExtra("list_story_item", listStoryItems)
-                itemView.context.startActivity(intent,
-                    optionsCompat.toBundle()
-                )
+                itemView.context.startActivity(intent, optionsCompat.toBundle())
             }
         }
     }

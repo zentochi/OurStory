@@ -9,6 +9,7 @@ import android.view.View
 import android.view.View.OnTouchListener
 import androidx.appcompat.widget.AppCompatEditText
 import com.danuartadev.ourstory.R
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 
 class edTextPassword : AppCompatEditText, OnTouchListener{
 

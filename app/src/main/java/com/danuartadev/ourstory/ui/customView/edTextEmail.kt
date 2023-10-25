@@ -1,5 +1,6 @@
 package com.danuartadev.ourstory.ui.customView
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,6 +9,7 @@ import android.util.Patterns
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.AppCompatEditText
 
 class edTextEmail : AppCompatEditText, OnTouchListener{
@@ -24,6 +26,7 @@ class edTextEmail : AppCompatEditText, OnTouchListener{
         init()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun init() {
         addTextChangedListener (object : TextWatcher{
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -44,6 +47,11 @@ class edTextEmail : AppCompatEditText, OnTouchListener{
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
         return false
+    }
+
+    private fun hideKeyboard() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(windowToken, 0)
     }
 
 }

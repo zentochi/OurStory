@@ -1,4 +1,4 @@
-package com.danuartadev.ourstory.ui.story.main
+package com.danuartadev.ourstory.ui.story.homeStory
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel

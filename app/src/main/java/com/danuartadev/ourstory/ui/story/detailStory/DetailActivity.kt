@@ -1,4 +1,4 @@
-package com.danuartadev.ourstory.ui.story.detail
+package com.danuartadev.ourstory.ui.story.detailStory
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

@@ -12,10 +12,11 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.danuartadev.ourstory.R
 import com.danuartadev.ourstory.data.pref.UserModel
 import com.danuartadev.ourstory.databinding.ActivityLoginBinding
 import com.danuartadev.ourstory.ui.ViewModelFactory
-import com.danuartadev.ourstory.ui.story.main.MainActivity
+import com.danuartadev.ourstory.ui.story.homeStory.MainActivity
 import com.danuartadev.ourstory.utils.Result
 
 class LoginActivity : AppCompatActivity() {
@@ -44,12 +45,13 @@ class LoginActivity : AppCompatActivity() {
                         showLoading(true)
                     }
                     is Result.Success -> {
+                        val name = result.data.loginResult?.name.toString()
                         val email = binding.emailEditText.text.toString()
                         val token = result.data.loginResult?.token ?: ""
                         Log.d(TAG, "Result.Success token: $token")
-                        viewModel.saveSession(UserModel(email, token, true))
+                        viewModel.saveSession(UserModel(name, email, token, true))
                         result.data.loginResult?.name.let {
-                            showToast(it.toString())
+                            showToast(getString(R.string.username_main, it.toString()))
                         }
                         showLoading(false)
                         val intent = Intent(this, MainActivity::class.java)

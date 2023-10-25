@@ -1,4 +1,4 @@
-package com.danuartadev.ourstory.ui.story.add
+package com.danuartadev.ourstory.ui.story.addStory
 
 import android.os.Build
 import android.os.Bundle

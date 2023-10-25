@@ -1,4 +1,4 @@
-package com.danuartadev.ourstory.ui.story.add
+package com.danuartadev.ourstory.ui.story.addStory
 
 import androidx.lifecycle.ViewModel
 import com.danuartadev.ourstory.data.UserRepository

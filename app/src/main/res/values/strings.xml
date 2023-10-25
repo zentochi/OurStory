@@ -24,4 +24,7 @@
     <string name="empty_image_warning">No image provided</string>
     <string name="language">Language</string>
     <string name="buttonupload">Upload Button</string>
+    <string name="username_upload">Upload as %1$s</string>
+    <string name="username_main">Welcome, %1$s</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>

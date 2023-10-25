@@ -5,29 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/progressIndicator"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:indeterminate="true"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
+            android:paddingHorizontal="8dp"
+
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:padding="16dp">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progressIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
 
             <Button
                 android:id="@+id/btnPostStory"
@@ -44,22 +38,23 @@
             <ImageView
                 android:id="@+id/imgProfile"
                 android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_height="0dp"
                 android:src="@drawable/ic_account"
+                app:layout_constraintBottom_toTopOf="@+id/guideline9"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
             <TextView
                 android:id="@+id/tvUsers"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:text="@string/username_upload"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/guideline9"
                 app:layout_constraintEnd_toStartOf="@+id/guideline7"
                 app:layout_constraintStart_toEndOf="@+id/imgProfile"
-                app:layout_constraintTop_toTopOf="@+id/guideline4"
-                tools:text="Username" />
+                app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
             <ImageView
                 android:id="@+id/previewImage"
@@ -73,39 +68,37 @@
                 app:srcCompat="@drawable/ic_image_preview" />
 
             <Button
+                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
                 android:id="@+id/btnCamera"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:backgroundTint="@color/navy"
                 android:text="@string/cameraChoose"
+                android:backgroundTint="@color/navy"
+                app:icon="@drawable/ic_photo_camera"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
                 app:layout_constraintTop_toBottomOf="@+id/descriptionTextField" />
 
             <Button
+                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
                 android:id="@+id/btnGallery"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:backgroundTint="@color/navy"
                 android:text="@string/galleryChoose"
+                app:icon="@drawable/ic_image_preview"
                 app:layout_constraintEnd_toStartOf="@+id/guideline7"
                 app:layout_constraintTop_toBottomOf="@+id/descriptionTextField" />
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_begin="0dp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/descriptionTextField"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                app:layout_constraintEnd_toEndOf="@+id/previewImage"
-                app:layout_constraintStart_toStartOf="@+id/previewImage"
+                app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                app:layout_constraintStart_toStartOf="@+id/guideline6"
                 app:layout_constraintTop_toBottomOf="@+id/previewImage">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -118,6 +111,13 @@
                     app:layout_constraintStart_toStartOf="@+id/previewImage"
                     app:layout_constraintTop_toBottomOf="@+id/btnCamera" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="16dp" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline6"
@@ -138,9 +138,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_begin="35dp" />
+                app:layout_constraintGuide_begin="51dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
 </ScrollView>

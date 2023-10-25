@@ -87,6 +87,23 @@ class UserRepository private constructor(
         }
     }
 
+    fun getStoriesWithLocation() = liveData {
+        emit(Result.Loading)
+        try {
+            val successResponse = apiService.getStoriesWithLocation()
+            Log.d(TAG, "getStoriesWithLocation response: $successResponse")
+            emit(Result.Success(successResponse))
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, FileUploadResponse::class.java)
+            Log.d(TAG, "getStoriesWithLocation response$errorResponse")
+            emit(Result.Error(errorResponse.message))
+        } catch (e: Exception) {
+            Log.e(TAG, "getStoiresWithLocation response: ${e.message}")
+            emit(Result.Error("An unexpected error occurred. ${e.message}"))
+        }
+    }
+
     fun uploadStory(imageFile: File, description: String) = liveData {
         emit(Result.Loading)
         val requestBody = description.toRequestBody("text/plain".toMediaType())
@@ -110,7 +127,6 @@ class UserRepository private constructor(
             emit(Result.Error("An unexpected error occurred. ${e.message}"))
         }
     }
-
 
     companion object {
         private const val TAG = "UserRepository"

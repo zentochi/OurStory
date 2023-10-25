@@ -1,5 +1,6 @@
-package com.danuartadev.ourstory.ui.story.add
+package com.danuartadev.ourstory.ui.story.addStory
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -16,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.danuartadev.ourstory.R
 import com.danuartadev.ourstory.databinding.ActivityAddStoryBinding
 import com.danuartadev.ourstory.ui.ViewModelFactory
-import com.danuartadev.ourstory.ui.story.main.MainActivity
+import com.danuartadev.ourstory.ui.story.homeStory.MainActivity
 import com.danuartadev.ourstory.utils.Result
 import com.danuartadev.ourstory.utils.getImageUri
 import com.danuartadev.ourstory.utils.reduceFileImage
@@ -39,6 +40,7 @@ class AddStoryActivity : AppCompatActivity() {
         setupAction()
     }
 
+    @SuppressLint("StringFormatInvalid")
     private fun setupView() {
         @Suppress("DEPRECATION")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -50,6 +52,8 @@ class AddStoryActivity : AppCompatActivity() {
             )
         }
         supportActionBar?.hide()
+        val name = intent.getStringExtra(NAME)
+        binding.tvUsers.text = getString(R.string.username_upload, name)
     }
     private fun setupAction() {
         binding.btnGallery.setOnClickListener {
@@ -138,6 +142,7 @@ class AddStoryActivity : AppCompatActivity() {
     }
 
     companion object {
+        private const val NAME = "name"
         private const val TAG = "AddStoryActivity"
     }
 
