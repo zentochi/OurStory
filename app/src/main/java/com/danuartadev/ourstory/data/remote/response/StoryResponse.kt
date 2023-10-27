@@ -1,6 +1,8 @@
 package com.danuartadev.ourstory.data.remote.response
 
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
@@ -17,9 +19,11 @@ data class StoryResponse(
 )
 
 @Parcelize
+@Entity(tableName = "list_story")
 data class ListStoryItem(
 	@field:SerializedName("id")
-	val id: String? = null,
+	@PrimaryKey
+	val id: String,
 
 	@field:SerializedName("name")
 	val name: String? = null,

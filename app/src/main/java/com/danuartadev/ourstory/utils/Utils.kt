@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import com.danuartadev.ourstory.BuildConfig
@@ -17,6 +18,9 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
@@ -105,4 +109,14 @@ fun rotateImage(source: Bitmap, angle: Float): Bitmap? {
     return Bitmap.createBitmap(
         source, 0, 0, source.width, source.height, matrix, true
     )
+}
+
+object DateFormatter {
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun formatDate(currentDateString: String, targetTimeZone: String): String {
+        val instant = Instant.parse(currentDateString)
+        val formatter = DateTimeFormatter.ofPattern("EEEE, MMM dd | hh:mm a")
+            .withZone(ZoneId.of(targetTimeZone))
+        return formatter.format(instant)
+    }
 }

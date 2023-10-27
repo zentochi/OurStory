@@ -13,6 +13,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.danuartadev.ourstory.R
 import com.danuartadev.ourstory.databinding.ActivityMainBinding
@@ -43,16 +44,17 @@ class MainActivity : AppCompatActivity() {
             } else {
                 val name = user.name
                 setupView()
-                getStories()
                 setupRecyclerView()
+                getStories()
                 setupAction(name)
             }
         }
         binding.refreshRvMain.setOnRefreshListener {
+            setupRecyclerView()
             getStories()
-            binding.rvMain.postDelayed({
-                binding.rvMain.scrollToPosition(0)
-            }, 200)
+//            binding.rvMain.postDelayed({
+//                binding.rvMain.scrollToPosition(0)
+//            }, 200)
             binding.refreshRvMain.isRefreshing = false
         }
     }
@@ -105,30 +107,49 @@ class MainActivity : AppCompatActivity() {
         binding.rvMain.layoutManager = layoutManager
 
         adapter = MainAdapter()
-        binding.rvMain.adapter = adapter
+        binding.rvMain.adapter = adapter.withLoadStateFooter(
+            footer = LoadingStateAdapter {
+                adapter.retry()
+            }
+        )
+
+//        val adapter = QuoteListAdapter()
+//        binding.rvQuote.adapter = adapter.withLoadStateFooter(
+//            footer = LoadingStateAdapter {
+//                adapter.retry()
+//            }
+//        )
+//
+//        mainViewModel.quote.observe(this) {
+//            adapter.submitData(lifecycle, it)
+//        }
     }
 
     private fun getStories() {
-        viewModel.getStories().observe(this) { result ->
-            if (result != null) {
-                when (result) {
-                    is Result.Loading -> {
-                        showLoading(true)
-                    }
-                    is Result.Success -> {
-                        showLoading(false)
-                        adapter.submitList(result.data.listStory)
-                        Log.d(TAG, "result: ${result.data.listStory}")
-                    }
-
-                    is Result.Error -> {
-                        showToast(result.error)
-                        Log.d(TAG, "result: ${result.error}")
-                        showLoading(false)
-                    }
-                }
-            }
+//        viewModel.getStories().observe(this) { result ->
+//            if (result != null) {
+//                when (result) {
+//                    is Result.Loading -> {
+//                        showLoading(true)
+//                    }
+//                    is Result.Success -> {
+//                        showLoading(false)
+//                        adapter.submitList(result.data.listStory)
+//                        Log.d(TAG, "result: ${result.data.listStory}")
+//                    }
+//
+//                    is Result.Error -> {
+//                        showToast(result.error)
+//                        Log.d(TAG, "result: ${result.error}")
+//                        showLoading(false)
+//                    }
+//                }
+//            }
+//        }
+        viewModel.getStories.observe(this) {
+            adapter.submitData(lifecycle, it)
         }
+
     }
 
     private fun showToast(message: String) {

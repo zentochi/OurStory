@@ -26,5 +26,11 @@
     <string name="language">Bahasa</string>
     <string name="buttonupload">Tombol Unggah</string>
     <string name="username_upload">Unggah sebagai %1$s</string>
+    <string name="title_activity_maps">MapsActivity</string>
     <string name="username_main">Selamat datang, %1$s</string>
+    <string name="retry">Coba lagi</string>
+    <string name="share_location_on">Bagikan lokasi</string>
+    <string name="share_location_off">Jangan bagikan lokasi</string>
+    <string name="permission_location_revoked">Izin dicabut. Pertimbangkan untuk mengizinkan izin lokasi untuk berbagi cerita dengan lokasi</string>
+    <string name="location_not_found">Lokasi tidak ditemukan. Coba lagi</string>
 </resources>

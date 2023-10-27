@@ -5,6 +5,7 @@ import com.danuartadev.ourstory.data.UserRepository
 import com.danuartadev.ourstory.data.pref.UserPreference
 import com.danuartadev.ourstory.data.pref.dataStore
 import com.danuartadev.ourstory.data.remote.retrofit.ApiConfig
+import com.danuartadev.ourstory.data.remote.room.StoryDatabase
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
@@ -15,6 +16,7 @@ object Injection {
             pref.getSession().first()
         }
         val apiService = ApiConfig.getApiService(user.token)
-        return UserRepository.getInstance(pref, apiService)
+        val database = StoryDatabase.getDatabase(context)
+        return UserRepository.getInstance(pref, apiService, database)
     }
 }

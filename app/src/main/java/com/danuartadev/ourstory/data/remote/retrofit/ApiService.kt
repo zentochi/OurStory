@@ -24,7 +24,10 @@ interface ApiService {
 
     @GET("stories")
     suspend fun getStoriesWithLocation(
-        @Query("location") location: Int = 1
+//        @Query("page") page: Int = 1,
+//        @Query("size") size: Int = 20,
+        @Query("size") size: Int? = null,
+        @Query("location") location: Int? = null
     ): StoryResponse
 
     @FormUrlEncoded
@@ -44,7 +47,9 @@ interface ApiService {
     @Multipart
     @POST("stories")
     suspend fun uploadStory(
-        @Part file: MultipartBody.Part, //photo
-        @Part("description") description: RequestBody
+        @Part file: MultipartBody.Part,
+        @Part("description") description: RequestBody,
+        @Part("lat") lat: Double? = null,
+        @Part("lon") lon: Double? = null
     ) : FileUploadResponse
 }

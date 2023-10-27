@@ -27,4 +27,9 @@
     <string name="username_upload">Upload as %1$s</string>
     <string name="username_main">Welcome, %1$s</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="retry">Retry now</string>
+    <string name="share_location_on">Share location</string>
+    <string name="share_location_off">Don\'t share location</string>
+    <string name="permission_location_revoked">Permission revoked. Consider to allow location permission to share stories with location</string>
+    <string name="location_not_found">Location is not found. Try again</string>
 </resources>

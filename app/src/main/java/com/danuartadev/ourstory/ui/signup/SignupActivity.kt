@@ -11,16 +11,21 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.danuartadev.ourstory.databinding.ActivitySignupBinding
 import com.danuartadev.ourstory.ui.ViewModelFactory
 import com.danuartadev.ourstory.ui.login.LoginActivity
+import com.danuartadev.ourstory.ui.story.homeStory.MainViewModel
 import com.danuartadev.ourstory.utils.Result
 
 class SignupActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignupBinding
-    private val viewModel by viewModels<SignupViewModel> {
-        ViewModelFactory.getInstance(this)
+//    private val viewModel by viewModels<SignupViewModel> {
+//        ViewModelFactory.getInstance(this)
+//    }
+    private val viewModel: SignupViewModel by lazy {
+        ViewModelProvider(this, ViewModelFactory.getInstance(applicationContext))[SignupViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

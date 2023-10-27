@@ -2,6 +2,8 @@ package com.danuartadev.ourstory.ui.story.addStory
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +16,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.danuartadev.ourstory.R
 import com.danuartadev.ourstory.databinding.ActivityAddStoryBinding
 import com.danuartadev.ourstory.ui.ViewModelFactory
@@ -22,14 +25,20 @@ import com.danuartadev.ourstory.utils.Result
 import com.danuartadev.ourstory.utils.getImageUri
 import com.danuartadev.ourstory.utils.reduceFileImage
 import com.danuartadev.ourstory.utils.uriToFile
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 
 class AddStoryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddStoryBinding
     private var currentImageUri: Uri? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val viewModel by viewModels<AddStoryViewModel> {
         ViewModelFactory.getInstance(this)
     }
+
+    private var currentLat: Double? = null
+    private var currentLng: Double? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +47,7 @@ class AddStoryActivity : AppCompatActivity() {
 
         setupView()
         setupAction()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
     }
 
     @SuppressLint("StringFormatInvalid")
@@ -55,6 +65,42 @@ class AddStoryActivity : AppCompatActivity() {
         val name = intent.getStringExtra(NAME)
         binding.tvUsers.text = getString(R.string.username_upload, name)
     }
+
+    private val launcherIntentCamera = registerForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { isSuccess ->
+        if (isSuccess) {
+            showImage()
+        }
+    }
+
+    private val launcherGallery = registerForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            currentImageUri = uri
+            showImage()
+        } else {
+            Log.d("Image Picker", "No image media selected")
+        }
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions())
+    { permission ->
+        when {
+            permission[android.Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
+                getMyLastLocation()
+            }
+            permission[android.Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+                getMyLastLocation()
+            }
+            else -> {
+                showToast(getString(R.string.permission_location_revoked))
+            }
+        }
+    }
+
     private fun setupAction() {
         binding.btnGallery.setOnClickListener {
             startGallery()
@@ -63,7 +109,43 @@ class AddStoryActivity : AppCompatActivity() {
             startCamera()
         }
         binding.btnPostStory.setOnClickListener {
-            uploadStory()
+            val lat = currentLat
+            val lng = currentLng
+            if (binding.switchShareLoc.isChecked) {
+                if (lat != null && lng != null) {
+                    Log.d(TAG, "setupAction: $lat, $lng")
+                    uploadStory(lat, lng)
+                } else {
+                    showToast("Location data is not available.")
+                }
+            } else if (!binding.switchShareLoc.isChecked){
+                uploadStory(null, null)
+            }
+        }
+        binding.switchShareLoc.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                binding.tvShareLoc.text = getString(R.string.share_location_on)
+                getMyLastLocation()
+            } else {
+                binding.tvShareLoc.text = getString(R.string.share_location_off)
+            }
+        }
+    }
+
+
+    private fun getMyLastLocation() {
+        if ( checkPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) && checkPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    currentLat = location.latitude
+                    currentLng = location.longitude
+                    Log.d(TAG, "getMyLastLocation: savedlat -> $currentLat, $currentLng")
+                } else {
+                    showToast(getString(R.string.location_not_found))
+                }
+            }
+        } else {
+            requestPermissionLauncher.launch( arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION) )
         }
     }
 
@@ -76,14 +158,14 @@ class AddStoryActivity : AppCompatActivity() {
         launcherIntentCamera.launch(currentImageUri)
     }
 
-    private fun uploadStory() {
+    private fun uploadStory(lat: Double?, lng: Double?) {
         currentImageUri?.let { uri ->
             val imageFile = uriToFile(uri, this).reduceFileImage()
             Log.d("Image File", "showImage: ${imageFile.path}")
             val description = binding.tvDesc.text.toString()
             showLoading(true)
 
-            viewModel.uploadImage(imageFile, description).observe(this) { result ->
+            viewModel.uploadImage(imageFile, description, lat, lng).observe(this) { result ->
                 if (result != null) {
                     when (result) {
                         is Result.Loading -> {
@@ -108,30 +190,15 @@ class AddStoryActivity : AppCompatActivity() {
         } ?: showToast(getString(R.string.empty_image_warning))
     }
 
-    private val launcherIntentCamera = registerForActivityResult(
-        ActivityResultContracts.TakePicture()
-    ) { isSuccess ->
-        if (isSuccess) {
-            showImage()
-        }
-    }
-
-    private val launcherGallery = registerForActivityResult(
-        ActivityResultContracts.PickVisualMedia()
-    ) { uri: Uri? ->
-        if (uri != null) {
-            currentImageUri = uri
-            showImage()
-        } else {
-            Log.d("Image Picker", "No image media selected")
-        }
-    }
-
     private fun showImage() {
         currentImageUri?.let {
             Log.d("Image uri", "showImage: $it")
             binding.previewImage.setImageURI(it)
         }
+    }
+
+    private fun checkPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun showLoading(isLoading: Boolean) {

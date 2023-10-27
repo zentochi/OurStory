@@ -13,7 +13,9 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.danuartadev.ourstory.R
+import com.danuartadev.ourstory.data.UserRepository
 import com.danuartadev.ourstory.data.pref.UserModel
+import com.danuartadev.ourstory.data.pref.UserPreference
 import com.danuartadev.ourstory.databinding.ActivityLoginBinding
 import com.danuartadev.ourstory.ui.ViewModelFactory
 import com.danuartadev.ourstory.ui.story.homeStory.MainActivity
@@ -45,6 +47,9 @@ class LoginActivity : AppCompatActivity() {
                         showLoading(true)
                     }
                     is Result.Success -> {
+                        // biar singleton ga ngebug
+                        UserRepository.clearInstance()
+                        ViewModelFactory.clearInstance()
                         val name = result.data.loginResult?.name.toString()
                         val email = binding.emailEditText.text.toString()
                         val token = result.data.loginResult?.token ?: ""

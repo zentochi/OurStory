@@ -9,12 +9,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.core.util.Pair
+import androidx.paging.PagingDataAdapter
 import com.bumptech.glide.Glide
 import com.danuartadev.ourstory.data.remote.response.ListStoryItem
 import com.danuartadev.ourstory.databinding.ItemMainBinding
 import com.danuartadev.ourstory.ui.story.detailStory.DetailActivity
 
-class MainAdapter : ListAdapter<ListStoryItem, MainAdapter.MainViewHolder>(DIFF_CALLBACK) {
+class MainAdapter : PagingDataAdapter<ListStoryItem, MainAdapter.MainViewHolder>(DIFF_CALLBACK) {
 
     class MainViewHolder(private val binding: ItemMainBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -48,7 +49,9 @@ class MainAdapter : ListAdapter<ListStoryItem, MainAdapter.MainViewHolder>(DIFF_
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val story = getItem(position)
-        holder.bind(story)
+        if (story != null) {
+            holder.bind(story)
+        }
     }
 
     companion object {
